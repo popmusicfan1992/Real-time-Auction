@@ -1,0 +1,226 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?   // null nếu dùng Google OAuth
+  name          String
+  avatar        String?
+  googleId      String?   @unique
+  phone         String?
+  address       String?
+  role          Role      @default(BIDDER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  wallet        Wallet?
+  auctions      Auction[]       @relation("SellerAuctions")
+  bids          Bid[]
+  watchlist     Watchlist[]
+  reminders     Reminder[]
+  notifications Notification[]
+}
+
+model Wallet {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  balance          Decimal  @default(0) @db.Decimal(12, 2)
+  frozenBalance    Decimal  @default(0) @db.Decimal(12, 2)
+  stripeCustomerId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions     Transaction[]
+  deposits         DepositHold[]
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  walletId        String
+  amount          Decimal         @db.Decimal(12, 2)
+  type            TransactionType
+  status          TransactionStatus @default(PENDING)
+  description     String?
+  stripePaymentId String?
+  createdAt       DateTime        @default(now())
+
+  wallet          Wallet          @relation(fields: [walletId], references: [id])
+}
+
+model DepositHold {
+  id                    String        @id @default(cuid())
+  walletId              String
+  auctionId             String
+  amount                Decimal       @db.Decimal(12, 2)
+  stripePaymentIntentId String?
+  status                DepositStatus @default(HELD)
+  createdAt             DateTime      @default(now())
+  releasedAt            DateTime?
+
+  wallet                Wallet        @relation(fields: [walletId], references: [id])
+  auction               Auction       @relation(fields: [auctionId], references: [id])
+}
+
+model Auction {
+  id              String        @id @default(cuid())
+  title           String
+  description     String
+  images          String[]      // Mảng URL ảnh từ Cloudinary
+  category        Category
+  startingPrice   Decimal       @db.Decimal(12, 2)
+  currentPrice    Decimal       @db.Decimal(12, 2)
+  buyNowPrice     Decimal?      @db.Decimal(12, 2)
+  minIncrement    Decimal       @db.Decimal(12, 2)
+  depositAmount   Decimal       @db.Decimal(12, 2)
+  startTime       DateTime
+  endTime         DateTime
+  status          AuctionStatus @default(SCHEDULED)
+  sellerId        String
+  winnerId        String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  seller          User          @relation("SellerAuctions", fields: [sellerId], references: [id])
+  bids            Bid[]
+  watchlist       Watchlist[]
+  reminders       Reminder[]
+  deposits        DepositHold[]
+  chatMessages    ChatMessage[]
+}
+
+model Bid {
+  id          String   @id @default(cuid())
+  auctionId   String
+  userId      String
+  amount      Decimal  @db.Decimal(12, 2)
+  isWinning   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  auction     Auction  @relation(fields: [auctionId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([auctionId, amount(sort: Desc)])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  auctionId String
+  sender    String   // Tên người gửi (hoặc "System")
+  message   String
+  isBot     Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  auction   Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+}
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  userId    String
+  auctionId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  auction   Auction  @relation(fields: [auctionId], references: [id])
+
+  @@unique([userId, auctionId])
+}
+
+model Reminder {
+  id        String         @id @default(cuid())
+  userId    String
+  auctionId String
+  timeTo    Int            // Số phút trước khi bắt đầu
+  status    ReminderStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+
+  user      User           @relation(fields: [userId], references: [id])
+  auction   Auction        @relation(fields: [auctionId], references: [id])
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String
+  title       String
+  message     String
+  type        NotificationType
+  isRead      Boolean          @default(false)
+  data        Json?            // metadata (auctionId, bidAmount, etc.)
+  createdAt   DateTime         @default(now())
+
+  user        User             @relation(fields: [userId], references: [id])
+}
+
+// --- Enums ---
+
+enum Role {
+  BIDDER
+  SELLER
+  ADMIN
+}
+
+enum Category {
+  WATCHES
+  ART
+  TECHNOLOGY
+  JEWELRY
+  FASHION
+  COLLECTIBLES
+  VEHICLES
+  REAL_ESTATE
+  OTHER
+}
+
+enum AuctionStatus {
+  SCHEDULED
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  BID_HOLD
+  BID_RELEASE
+  PAYMENT
+  REFUND
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum DepositStatus {
+  HELD
+  RELEASED
+  CHARGED
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+  CANCELLED
+}
+
+enum NotificationType {
+  BID_OUTBID
+  AUCTION_WON
+  AUCTION_LOST
+  AUCTION_STARTING
+  PAYMENT_SUCCESS
+  DEPOSIT_RELEASED
+  SYSTEM
+}

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GALLERY X - Wallet &amp; Checkout</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Work+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#bec6e0",
+                    "tertiary-fixed": "#71f8e4",
+                    "secondary-container": "#ee9800",
+                    "primary-fixed": "#dae2fd",
+                    "secondary": "#ffb95f",
+                    "tertiary": "#4fdbc8",
+                    "inverse-surface": "#e0e3e5",
+                    "inverse-primary": "#565e74",
+                    "surface-container-high": "#272a2c",
+                    "on-secondary-fixed": "#2a1700",
+                    "on-tertiary-fixed": "#00201c",
+                    "surface-dim": "#101415",
+                    "background": "#101415",
+                    "primary-fixed-dim": "#bec6e0",
+                    "on-surface-variant": "#c6c6cd",
+                    "surface-container-low": "#191c1e",
+                    "on-primary-fixed": "#131b2e",
+                    "on-primary-container": "#798098",
+                    "on-tertiary": "#003731",
+                    "inverse-on-surface": "#2d3133",
+                    "on-error": "#690005",
+                    "primary": "#bec6e0",
+                    "on-error-container": "#ffdad6",
+                    "outline": "#909097",
+                    "on-secondary": "#472a00",
+                    "on-secondary-container": "#5b3800",
+                    "on-primary": "#283044",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "surface-container": "#1d2022",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "surface-container-highest": "#323537",
+                    "on-tertiary-fixed-variant": "#005048",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "on-tertiary-container": "#009182",
+                    "primary-container": "#0f172a",
+                    "tertiary-container": "#001c18",
+                    "error": "#ffb4ab",
+                    "surface-bright": "#363a3b",
+                    "surface-container-lowest": "#0b0f10",
+                    "secondary-fixed": "#ffddb8",
+                    "error-container": "#93000a",
+                    "surface-variant": "#323537",
+                    "on-surface": "#e0e3e5",
+                    "tertiary-fixed-dim": "#4fdbc8",
+                    "on-background": "#e0e3e5",
+                    "surface": "#101415",
+                    "outline-variant": "#45464d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "20px",
+                    "margin": "32px",
+                    "xl": "48px",
+                    "unit": "4px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-bold": ["Work Sans"],
+                    "display-auction": ["Manrope"],
+                    "body-lg": ["Work Sans"],
+                    "price-display": ["Manrope"],
+                    "headline-lg": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "body-md": ["Work Sans"]
+            },
+            "fontSize": {
+                    "label-bold": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                    "display-auction": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                    "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                    "price-display": ["28px", { "lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                    "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                    "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                    "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md min-h-screen flex flex-col selection:bg-secondary selection:text-on-secondary">
+<!-- TopNavBar Shared Component -->
+<header class="bg-slate-950/80 backdrop-blur-xl docked full-width top-0 z-50 sticky hidden md:block">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto shadow-2xl border-b border-white/10 font-manrope font-medium tracking-tight">
+<!-- Brand & Navigation -->
+<div class="flex items-center gap-12">
+<a class="text-xl font-black italic tracking-tighter text-amber-500 uppercase" href="#">GALLERY X</a>
+<nav class="flex gap-8">
+<!-- Inactive links -->
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-md" href="#">Explore</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-md" href="#">Live Auctions</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-md" href="#">How it Works</a>
+<!-- Active link (Wallet) -->
+<a class="text-amber-500 border-b-2 border-amber-500 pb-1 px-3 py-2" href="#">Wallet</a>
+</nav>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-6">
+<!-- Search bar on right implied -->
+<button class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 p-2 rounded-full">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="flex items-center gap-4 border-l border-white/10 pl-6">
+<button class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 p-2 rounded-full relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+</button>
+<button class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 p-2 rounded-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">account_balance_wallet</span>
+</button>
+<button class="bg-amber-500 text-slate-950 font-bold px-6 py-2 rounded-full ml-4 hover:opacity-80 transition-opacity">
+                        Place Bid
+                    </button>
+<button class="w-10 h-10 rounded-full overflow-hidden border border-white/20 ml-2">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A sophisticated headshot of a person with a neutral expression, dressed in a sharp dark suit. The lighting is studio-quality, creating subtle highlights and deep shadows that fit perfectly within a premium, high-contrast dark mode gallery aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSV46JFwopKXD5qthaR5WED1TJqq17zuCQI3SAC_rjliFj3FkmoTnUV31K4XkjqQLeKyQU6eMjF-d5jQ-WX-fxo5hos-g-aIyJpzM511D1y1D6ShnBOp3wAEGoXPo5fVSlOe7C8g5rxbYVOBfvZ72Xr9A3Elkr-6Te7fTiVoxHW6cEn50aYvy09sk4rQC9AC_lI9FWqVQPRzqRQ8G-y-sNselL058V4GNvYUyPcjZvEb071xT-9bBoGPwma9iDVhqQokEXXA9T9hQ"/>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow w-full max-w-[1200px] mx-auto px-4 md:px-8 py-12">
+<div class="mb-10">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Wallet &amp; Checkout</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your funds and complete pending transactions securely.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Wallet Overview (Bento Style) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Available Balance Card -->
+<div class="bg-surface-container rounded-xl p-6 border border-outline-variant relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="flex items-center justify-between mb-4 relative z-10">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-widest">Available Balance</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div class="font-display-auction text-display-auction text-secondary mb-2 relative z-10">
+                        $124,500<span class="text-3xl text-secondary/70">.00</span>
+</div>
+<div class="flex gap-2 relative z-10 mt-6">
+<button class="flex-1 bg-surface-bright text-on-surface font-label-bold text-label-bold py-3 rounded-lg border border-outline-variant hover:border-secondary hover:text-secondary transition-colors text-center">Deposit</button>
+<button class="flex-1 bg-surface-bright text-on-surface font-label-bold text-label-bold py-3 rounded-lg border border-outline-variant hover:border-secondary hover:text-secondary transition-colors text-center">Withdraw</button>
+</div>
+</div>
+<!-- Frozen Funds / Deposits Card -->
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-tertiary text-xl">lock</span>
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-widest">Frozen Funds</span>
+</div>
+<div class="font-price-display text-price-display text-on-surface mb-1">
+                        $35,000.00
+                    </div>
+<p class="text-sm text-on-surface-variant">Currently held for active bids on 3 lots.</p>
+</div>
+<!-- Security Assurance -->
+<div class="flex items-center gap-4 p-4 rounded-lg bg-surface-container-highest/50 border border-surface-variant">
+<span class="material-symbols-outlined text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">shield_locked</span>
+<div>
+<h4 class="font-label-bold text-label-bold text-on-surface">Bank-Grade Security</h4>
+<p class="text-xs text-on-surface-variant mt-1">All transactions are heavily encrypted.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Checkout / Won Items -->
+<div class="lg:col-span-8 bg-surface-container rounded-xl border border-outline-variant overflow-hidden flex flex-col">
+<!-- Section Header -->
+<div class="px-8 py-6 border-b border-surface-variant flex justify-between items-end bg-surface-container-high/50">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Pending Settlement</h2>
+<p class="text-sm text-on-surface-variant mt-1">Items won waiting for final payment.</p>
+</div>
+<span class="bg-error/10 text-error px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-error/20 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span> Action Required
+                    </span>
+</div>
+<!-- Items List -->
+<div class="flex flex-col flex-grow">
+<!-- Item 1 -->
+<div class="px-8 py-6 border-b border-surface-variant flex flex-col sm:flex-row gap-6 items-start sm:items-center hover:bg-surface-container-high/30 transition-colors">
+<div class="w-24 h-24 rounded-lg bg-surface-dim overflow-hidden flex-shrink-0 border border-surface-variant">
+<img alt="Won Item Thumbnail" class="w-full h-full object-cover" data-alt="A highly detailed, cinematic photograph of a vintage Rolex Daytona watch resting on a piece of dark, polished slate. The lighting is moody and directional, highlighting the metallic gleam and intricate dial details against the deep black background. The overall aesthetic is luxurious, high-end, and perfectly aligned with a premium dark-mode gallery setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkjQdheKmXQ_LXQ99X-8Nwe5Eo-p6qYDz3vVZXEnqVkRJyXGE_x-BRv5_0498hNDpYsPt3EmsFCc_zSqtjH_nShgo_ah_EGmYOhV8KC-TDHEtu-FAmT0eGvBDwM9mvDJGO5pkfspmeQV-kL4tt6E2P0AVFYF9Hxcx7N_BA8wTjldIljCfDUENGAgacDyXXSD0dFM1XM1NggPEK62X30TJ1zD_QBSrEFXBuN4-T4fecjyDiwViG43t24NRG20VC49Fzp2RHwUooiMc"/>
+</div>
+<div class="flex-grow">
+<div class="text-xs text-secondary mb-1 font-bold tracking-wider uppercase">Lot #412</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold mb-1">1971 Rolex Daytona 'Paul Newman'</h3>
+<p class="text-sm text-on-surface-variant">Won on Oct 24, 2024</p>
+</div>
+<div class="text-right mt-4 sm:mt-0 flex-shrink-0">
+<div class="font-price-display text-price-display text-on-surface" style="font-size: 24px;">$185,000</div>
+<div class="text-xs text-on-surface-variant mt-1">+ $18,500 Buyer's Premium</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="px-8 py-6 border-b border-surface-variant flex flex-col sm:flex-row gap-6 items-start sm:items-center hover:bg-surface-container-high/30 transition-colors">
+<div class="w-24 h-24 rounded-lg bg-surface-dim overflow-hidden flex-shrink-0 border border-surface-variant">
+<img alt="Won Item Thumbnail" class="w-full h-full object-cover" data-alt="A striking, contemporary abstract painting dominated by deep blues and vibrant teals, set against a dark grey gallery wall. The artwork is illuminated by precise, focused gallery lighting that casts soft shadows and enhances the texture of the thick impasto strokes. The environment evokes a sophisticated, high-end art auction viewing room in a dark mode context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKXwLs4YGvXr07IW3WRz--wNVBYkQQTX9p8jiecLLZNySoGcb8q0ieHCLtn4rUWJDMYatiogWdGzNe4R9-wlJrpSEmciifM0vkQ5gfV7-ypbZx8yLtZHH_MGeDXsgksueTVzcoIPQ3BCH3Cn9a_EN2mVlpF_Jey2bPtDsZ601jf5QF2gh7IDde7BWJCm5DvElyNbKbtBRUPrEMeBmeL3S13CDqJ_GwfXcAQa89CUgrL6YANRy1Qvudit9pMKMfIcz1wCuqRdwMUnI"/>
+</div>
+<div class="flex-grow">
+<div class="text-xs text-secondary mb-1 font-bold tracking-wider uppercase">Lot #089</div>
+<h3 class="font-body-lg text-body-lg text-on-surface font-semibold mb-1">Untitled (Oceanic Forms) - Mark Rothko</h3>
+<p class="text-sm text-on-surface-variant">Won on Oct 24, 2024</p>
+</div>
+<div class="text-right mt-4 sm:mt-0 flex-shrink-0">
+<div class="font-price-display text-price-display text-on-surface" style="font-size: 24px;">$2,450,000</div>
+<div class="text-xs text-on-surface-variant mt-1">+ $245,000 Buyer's Premium</div>
+</div>
+</div>
+</div>
+<!-- Checkout Summary & Action -->
+<div class="bg-surface-container-high p-8 flex flex-col lg:flex-row gap-8 justify-between items-center mt-auto">
+<div class="w-full lg:w-1/2">
+<div class="flex justify-between items-center mb-3">
+<span class="text-on-surface-variant font-medium">Subtotal (2 Items)</span>
+<span class="text-on-surface font-medium">$2,635,000</span>
+</div>
+<div class="flex justify-between items-center mb-4">
+<span class="text-on-surface-variant font-medium">Total Fees &amp; Premium</span>
+<span class="text-on-surface font-medium">$263,500</span>
+</div>
+<div class="w-full h-px bg-surface-variant mb-4"></div>
+<div class="flex justify-between items-end">
+<span class="text-on-surface font-bold text-lg uppercase tracking-wide">Total Due</span>
+<span class="font-price-display text-price-display text-secondary" style="font-size: 32px;">$2,898,500</span>
+</div>
+</div>
+<div class="w-full lg:w-1/2 flex flex-col gap-4">
+<select class="w-full bg-surface-dim border border-outline-variant text-on-surface rounded-lg px-4 py-3 focus:ring-tertiary focus:border-tertiary appearance-none font-medium">
+<option value="wire">Pay via Wire Transfer</option>
+<option value="crypto">Pay via Cryptocurrency</option>
+<option disabled="" value="wallet">Pay via Wallet Balance (Insufficient)</option>
+</select>
+<button class="w-full bg-secondary text-on-secondary font-label-bold text-label-bold py-4 rounded-full uppercase tracking-widest hover:bg-secondary-container transition-colors shadow-[0_10px_20px_rgba(238,152,0,0.2)]">
+                            Initiate Payment
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Shared Component -->
+<footer class="bg-slate-950 text-amber-500 font-manrope text-xs tracking-wide w-full py-12 mt-auto border-t border-slate-900 flat no shadows">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto gap-6">
+<div class="text-lg font-black text-slate-200">
+                GALLERY X
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-slate-500 hover:text-amber-500 transition-colors Standard link hover" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors Standard link hover" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors Standard link hover" href="#">Consign with Us</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors Standard link hover" href="#">Affiliate Program</a>
+</div>
+<div class="text-slate-500">
+                © 2024 GALLERY X AUCTION HOUSE. ALL RIGHTS RESERVED.
+            </div>
+</div>
+</footer>
+<!-- BottomNavBar Shared Component (Mobile Only) -->
+<nav class="bg-slate-950/90 backdrop-blur-lg font-manrope text-[10px] uppercase font-bold tracking-widest fixed bottom-0 w-full z-50 rounded-t-2xl border-t border-white/5 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 md:hidden">
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400 gap-1" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400 gap-1" href="#">
+<span class="material-symbols-outlined text-2xl">explore</span>
+<span>Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400 gap-1" href="#">
+<span class="material-symbols-outlined text-2xl">gavel</span>
+<span>Live</span>
+</a>
+<!-- Active Tab -->
+<a class="flex flex-col items-center justify-center text-amber-500 scale-110 Active: scale-90 transition-transform gap-1" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span>Wallet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400 gap-1" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<span>Profile</span>
+</a>
+</nav>
+</body></html>

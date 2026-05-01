@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gallery X - Explore Catalog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#bec6e0",
+                        "tertiary-fixed": "#71f8e4",
+                        "secondary-container": "#ee9800",
+                        "primary-fixed": "#dae2fd",
+                        "secondary": "#ffb95f",
+                        "tertiary": "#4fdbc8",
+                        "inverse-surface": "#e0e3e5",
+                        "inverse-primary": "#565e74",
+                        "surface-container-high": "#272a2c",
+                        "on-secondary-fixed": "#2a1700",
+                        "on-tertiary-fixed": "#00201c",
+                        "surface-dim": "#101415",
+                        "background": "#101415",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-surface-variant": "#c6c6cd",
+                        "surface-container-low": "#191c1e",
+                        "on-primary-fixed": "#131b2e",
+                        "on-primary-container": "#798098",
+                        "on-tertiary": "#003731",
+                        "inverse-on-surface": "#2d3133",
+                        "on-error": "#690005",
+                        "primary": "#bec6e0",
+                        "on-error-container": "#ffdad6",
+                        "outline": "#909097",
+                        "on-secondary": "#472a00",
+                        "on-secondary-container": "#5b3800",
+                        "on-primary": "#283044",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-container": "#1d2022",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "surface-container-highest": "#323537",
+                        "on-tertiary-fixed-variant": "#005048",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "on-tertiary-container": "#009182",
+                        "primary-container": "#0f172a",
+                        "tertiary-container": "#001c18",
+                        "error": "#ffb4ab",
+                        "surface-bright": "#363a3b",
+                        "surface-container-lowest": "#0b0f10",
+                        "secondary-fixed": "#ffddb8",
+                        "error-container": "#93000a",
+                        "surface-variant": "#323537",
+                        "on-surface": "#e0e3e5",
+                        "tertiary-fixed-dim": "#4fdbc8",
+                        "on-background": "#e0e3e5",
+                        "surface": "#101415",
+                        "outline-variant": "#45464d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "20px",
+                        "margin": "32px",
+                        "xl": "48px",
+                        "unit": "4px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-bold": ["Work Sans"],
+                        "display-auction": ["Manrope"],
+                        "body-lg": ["Work Sans"],
+                        "price-display": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "body-md": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-bold": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-auction": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "price-display": ["28px", { "lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(39, 42, 44, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(144, 144, 151, 0.1);
+        }
+        .live-pulse {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col antialiased">
+<!-- TopNavBar (Shared Component) -->
+<nav class="bg-slate-950/80 backdrop-blur-xl font-manrope font-medium tracking-tight sticky top-0 z-50 border-b border-white/10 shadow-2xl">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-xl font-black italic tracking-tighter text-amber-500 uppercase" href="#">GALLERY X</a>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-amber-500 border-b-2 border-amber-500 pb-1" href="#">Explore</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 duration-300 px-2 py-1 rounded" href="#">Live Auctions</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 duration-300 px-2 py-1 rounded" href="#">How it Works</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 duration-300 px-2 py-1 rounded" href="#">Wallet</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search Bar Placeholder -->
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" style="font-size: 20px;">search</span>
+<input class="bg-surface-container text-on-surface border border-outline/30 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:border-tertiary transition-colors w-64 font-body-md text-body-md" placeholder="Search catalog..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+</div>
+<button class="hidden md:block bg-amber-500 text-slate-950 px-6 py-2 rounded-full font-bold hover:bg-amber-400 transition-colors">
+                    Place Bid
+                </button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full border-2 border-slate-800 cursor-pointer" data-alt="A close up portrait of a serious, well-dressed man in a modern gallery setting, representing a high-net-worth collector. The lighting is moody and cinematic, highlighting his facial features against a dark, out-of-focus background. The style is highly professional and corporate, fitting a luxury auction platform aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdp4rjmsC4gLtzUYPr8DjAq3omcXjSzvjPXAi5RU16ZCgCfmeqVxvsMdqHesWcIBoXklhCreFOCQSMPbGjqfMmNiiHk3WUgEMA3Dqtty1N145pEqSuXkLB3LJk4nly5z2eSqSw7nNNQ294B7YQ083vjjFwHU_2vHsiaztHbmMTuzt72sd_VprVlwWe_gH0YZaRYFpll2dv1dAzfLnLk54eHrL6z6waarXpw2jROyy8as8l2W04gLTY6Azdd37D4gEW7tp4nVfoxQA"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Layout -->
+<main class="flex-grow max-w-7xl mx-auto w-full px-6 py-8 flex flex-col md:flex-row gap-8">
+<!-- Left Sidebar (Filters) -->
+<aside class="w-full md:w-64 flex-shrink-0">
+<div class="sticky top-28 space-y-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Categories</h3>
+<ul class="space-y-2">
+<li>
+<button class="w-full flex items-center justify-between py-2 px-3 rounded-lg bg-surface-container-high text-amber-500 font-label-bold text-label-bold border-l-2 border-amber-500">
+<span>All Categories</span>
+<span class="text-on-surface-variant text-xs">1,240</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between py-2 px-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-bold text-label-bold">
+<span>Watches</span>
+<span class="text-surface-variant text-xs">342</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between py-2 px-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-bold text-label-bold">
+<span>Fine Art</span>
+<span class="text-surface-variant text-xs">512</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between py-2 px-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-bold text-label-bold">
+<span>Tech &amp; Gadgets</span>
+<span class="text-surface-variant text-xs">89</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between py-2 px-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-label-bold text-label-bold">
+<span>Collectibles</span>
+<span class="text-surface-variant text-xs">297</span>
+</button>
+</li>
+</ul>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Status</h3>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 border border-outline rounded bg-surface-container group-hover:border-tertiary transition-colors">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-tertiary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Live Now</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 border border-outline rounded bg-surface-container group-hover:border-tertiary transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-tertiary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Upcoming</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 border border-outline rounded bg-surface-container group-hover:border-tertiary transition-colors">
+<input class="peer sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-[16px] text-tertiary opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">Ended</span>
+</label>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Content Area -->
+<div class="flex-grow space-y-8">
+<!-- Header & Tabs -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-outline-variant pb-4">
+<div>
+<h1 class="font-display-auction text-display-auction text-on-surface mb-2">Explore Catalog</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Discover extraordinary items from around the globe.</p>
+</div>
+<div class="flex bg-surface-container-high rounded-lg p-1">
+<button class="px-6 py-2 rounded-md bg-surface-variant text-on-surface font-label-bold text-label-bold shadow-sm flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-red-500 live-pulse"></span>
+                        Live Now
+                    </button>
+<button class="px-6 py-2 rounded-md text-on-surface-variant hover:text-on-surface font-label-bold text-label-bold transition-colors">
+                        Upcoming
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Catalog -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Lot Card: Featured (Spans 2 cols on lg) -->
+<div class="lg:col-span-2 glass-panel rounded-xl overflow-hidden group relative flex flex-col md:flex-row">
+<div class="absolute top-4 left-4 z-10 flex gap-2">
+<div class="bg-red-500/90 text-white px-3 py-1 rounded-full flex items-center gap-2 font-label-bold text-label-bold text-[12px] shadow-lg">
+<span class="w-2 h-2 rounded-full bg-white live-pulse"></span>
+                            LIVE
+                        </div>
+<div class="bg-surface-container-high/80 backdrop-blur border border-outline/30 text-on-surface px-3 py-1 rounded-full flex items-center gap-1 font-label-bold text-label-bold text-[12px]">
+<span class="material-symbols-outlined text-[14px] text-blue-400" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                            Verified
+                        </div>
+</div>
+<div class="w-full md:w-3/5 h-64 md:h-96 relative overflow-hidden bg-surface-container">
+<img alt="Vintage Rolex Submariner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A highly detailed close-up shot of a vintage luxury mechanical watch, specifically a classic diver's model with a faded black bezel and glowing patina hour markers. The watch is presented on a dark, reflective surface within a high-end, moody gallery setting. Dramatic, focused spotlighting emphasizes the brushed steel texture and the intricate details of the dial, aligning with a premium, corporate dark-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDe0gvk4G0UvfGdNJqLC4oW1lzE-uxhPwWZGstbCtJTJRekTj1qtlNGhtsLJICNdePiTPCjnVoJyeLjXyP9711hDqxd_dXNTTNC4hL0c7A7e6AFtB9ZsG68xh37XWTdlh3tGmc5FtELyyTNsM1iW5ZIJ2HMLVyYDnc37_hIGdHQd6nyCNfbQo9qd2bHnakjKudU4OgVCxoULXqXWoUmG5MU1szmjfE5cwjDHRjkVMAMOWVp03jod_7BrPCyi5vGr6j6oC6OnkEcGSU"/>
+<!-- Gradient Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"></div>
+</div>
+<div class="w-full md:w-2/5 p-6 flex flex-col justify-between bg-surface-container-high/50">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-label-bold text-on-surface-variant uppercase tracking-wider border border-outline/30 px-2 py-0.5 rounded">Lot 42</span>
+<span class="text-xs font-label-bold text-tertiary uppercase tracking-wider">Watches</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2 leading-tight">1974 Rolex Submariner Ref. 5513</h2>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">An exceptionally preserved example of the classic no-date Submariner, featuring a stunning 'Maxi' dial with beautiful cream patina.</p>
+</div>
+<div class="mt-6 space-y-4">
+<div class="flex justify-between items-end border-b border-outline/20 pb-4">
+<div>
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-1">Current Bid</p>
+<p class="font-price-display text-price-display text-secondary-container">$18,500</p>
+</div>
+<div class="text-right">
+<p class="font-label-bold text-label-bold text-on-surface-variant mb-1">Ends In</p>
+<p class="font-headline-md text-headline-md text-red-400 font-mono">00:14:32</p>
+</div>
+</div>
+<button class="w-full bg-amber-500 text-slate-950 py-4 rounded-lg font-bold text-lg hover:bg-amber-400 transition-colors shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] flex justify-center items-center gap-2">
+                                Bid $19,000
+                                <span class="material-symbols-outlined text-[20px]">gavel</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Lot Card: Standard -->
+<div class="glass-panel rounded-xl overflow-hidden group flex flex-col">
+<div class="relative h-64 overflow-hidden bg-surface-container">
+<div class="absolute top-3 left-3 z-10">
+<div class="bg-red-500/90 text-white px-2 py-1 rounded flex items-center gap-1.5 font-label-bold text-label-bold text-[10px] uppercase shadow">
+<span class="w-1.5 h-1.5 rounded-full bg-white live-pulse"></span>
+                                Live
+                            </div>
+</div>
+<img alt="Abstract Contemporary Painting" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A bold, vibrant abstract expressionist painting featuring sweeping strokes of deep blue, crimson, and gold on a large canvas. The artwork is displayed in a dark, sophisticated gallery space with precise, dramatic spotlighting illuminating the texture of the thick oil paint. The surrounding environment is minimalist and dark, emphasizing a modern, high-end corporate auction visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5VR5hnk-YLFeg5vdxJ6HHpeLX6Z84_1Q75yFYqzmTwAtPxFN42bnppeo9ObLzdlmVAsH25_tWfYZkwdnCSGenQQxOn7ZCRIgkDRDOFl21Wejroxc62CFK94A5x9X18PlK7Xd9RrelPfnIE-BrrAXRWePrq6CP2oMCIgvZtoChYPrBUyBb-suDHBJrxZwblTLx1QB1TrtWeADwbpympDLhtn10qPhXLO-N0gfg8myMmS1XuJ8TthvONnt5hv6h3qOAkWcjACZlNKM"/>
+</div>
+<div class="p-5 flex-grow flex flex-col justify-between">
+<div class="mb-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider border border-outline/30 px-1.5 py-0.5 rounded">Lot 108</span>
+<span class="text-[10px] font-label-bold text-tertiary uppercase tracking-wider">Fine Art</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-snug line-clamp-2">"Midnight Convergence" - Elena Rostova, 2021</h3>
+</div>
+<div>
+<div class="flex justify-between items-end mb-4">
+<div>
+<p class="font-label-bold text-label-bold text-on-surface-variant text-xs mb-0.5">Current Bid</p>
+<p class="font-price-display text-price-display text-secondary-container text-[24px]">$42,000</p>
+</div>
+<div class="text-right">
+<p class="font-label-bold text-label-bold text-on-surface-variant text-xs mb-0.5">Ends In</p>
+<p class="font-headline-md text-headline-md text-red-400 text-[20px] font-mono">01:45:12</p>
+</div>
+</div>
+<button class="w-full border border-amber-500 text-amber-500 py-3 rounded-lg font-bold hover:bg-amber-500/10 transition-colors flex justify-center items-center gap-2">
+                                Quick Bid
+                            </button>
+</div>
+</div>
+</div>
+<!-- Lot Card: Standard -->
+<div class="glass-panel rounded-xl overflow-hidden group flex flex-col">
+<div class="relative h-64 overflow-hidden bg-surface-container flex items-center justify-center p-8">
+<div class="absolute top-3 left-3 z-10 flex gap-2">
+<div class="bg-surface-variant/90 text-on-surface px-2 py-1 rounded flex items-center gap-1.5 font-label-bold text-label-bold text-[10px] uppercase shadow">
+<span class="material-symbols-outlined text-[12px]">schedule</span>
+                                Ending Soon
+                            </div>
+</div>
+<img alt="Vintage Leica Camera" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" data-alt="A pristine vintage Leica rangefinder camera resting on a sleek, dark slate pedestal. The lighting is extremely controlled and moody, casting subtle shadows that highlight the machined metal edges and textured leather grip of the camera body. The overall atmosphere conveys exclusivity and technological heritage within a modern, dark-themed auction gallery aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC_981T4CG8b5w6uGTP4CBmOiJHj-XQKb_CyeuYPGJvrQcbmJ_Az7YfQw5UDp_pWS7nVxdLTMorC4rWoRW4ZQJv08_i2z7CCYhJJVPUa2_3i6itXOlc-9-1WUsPt4qOaY36t9LbNTSlHCDRGFO4NpTDZSPlMjWB3K34-zFaA63sJdC-y3dwsNbPTeoOTIyh9haYqGodqujpK5Q2CXvTiHRV1MRO5Ng0joOuNWY3lFKpiP7FrD8tKyIGTswiUnA-tr1Fj3X2-66M8E"/>
+</div>
+<div class="p-5 flex-grow flex flex-col justify-between">
+<div class="mb-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider border border-outline/30 px-1.5 py-0.5 rounded">Lot 76</span>
+<span class="text-[10px] font-label-bold text-tertiary uppercase tracking-wider">Tech &amp; Gadgets</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-snug line-clamp-2">Leica M3 Double Stroke (1955)</h3>
+</div>
+<div>
+<div class="flex justify-between items-end mb-4">
+<div>
+<p class="font-label-bold text-label-bold text-on-surface-variant text-xs mb-0.5">Current Bid</p>
+<p class="font-price-display text-price-display text-secondary-container text-[24px]">$3,200</p>
+</div>
+<div class="text-right">
+<p class="font-label-bold text-label-bold text-on-surface-variant text-xs mb-0.5">Ends In</p>
+<p class="font-headline-md text-headline-md text-red-400 text-[20px] font-mono">03:12:05</p>
+</div>
+</div>
+<button class="w-full border border-amber-500 text-amber-500 py-3 rounded-lg font-bold hover:bg-amber-500/10 transition-colors flex justify-center items-center gap-2">
+                                Quick Bid
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Load More -->
+<div class="pt-8 flex justify-center">
+<button class="border border-outline hover:border-tertiary text-on-surface px-8 py-3 rounded-full font-label-bold text-label-bold transition-all hover:text-tertiary">
+                    Load More Catalog Items
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only - Suppressed per rules since this is a top level destination? Yes, Bottom Nav rules say render if top level destination. Explore is a top level destination.) -->
+<!-- Wait, rules say: "The "Destination" Rule: You are only permitted to render the BottomNavBar or SideNav if the current screen represents a top-level destination within the app's primary ecosystem." Explore is a top-level destination. -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 md:hidden bg-slate-950/90 backdrop-blur-lg font-manrope text-[10px] uppercase font-bold tracking-widest fixed bottom-0 w-full z-50 rounded-t-2xl border-t border-white/5 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400">
+<span class="material-symbols-outlined mb-1">home</span>
+            Home
+        </div>
+<div class="flex flex-col items-center justify-center text-amber-500 scale-110 Active: scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">explore</span>
+            Explore
+        </div>
+<div class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400">
+<span class="material-symbols-outlined mb-1">gavel</span>
+            Live
+        </div>
+<div class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400">
+<span class="material-symbols-outlined mb-1">account_balance_wallet</span>
+            Wallet
+        </div>
+<div class="flex flex-col items-center justify-center text-slate-500 hover:text-amber-400">
+<span class="material-symbols-outlined mb-1">person</span>
+            Profile
+        </div>
+</nav>
+<!-- Footer (Shared Component) -->
+<footer class="bg-slate-950 font-manrope text-xs tracking-wide w-full py-12 mt-auto border-t border-slate-900 mb-16 md:mb-0">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto gap-6">
+<div class="text-lg font-black text-slate-200 uppercase">
+                GALLERY X
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Consign with Us</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Affiliate Program</a>
+</div>
+<div class="text-slate-500">
+                © 2024 GALLERY X AUCTION HOUSE. ALL RIGHTS RESERVED.
+            </div>
+</div>
+</footer>
+</body></html>

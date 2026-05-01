@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Seller Dashboard - Create Auction</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Work+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#bec6e0",
+                      "tertiary-fixed": "#71f8e4",
+                      "secondary-container": "#ee9800",
+                      "primary-fixed": "#dae2fd",
+                      "secondary": "#ffb95f",
+                      "tertiary": "#4fdbc8",
+                      "inverse-surface": "#e0e3e5",
+                      "inverse-primary": "#565e74",
+                      "surface-container-high": "#272a2c",
+                      "on-secondary-fixed": "#2a1700",
+                      "on-tertiary-fixed": "#00201c",
+                      "surface-dim": "#101415",
+                      "background": "#101415",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-surface-variant": "#c6c6cd",
+                      "surface-container-low": "#191c1e",
+                      "on-primary-fixed": "#131b2e",
+                      "on-primary-container": "#798098",
+                      "on-tertiary": "#003731",
+                      "inverse-on-surface": "#2d3133",
+                      "on-error": "#690005",
+                      "primary": "#bec6e0",
+                      "on-error-container": "#ffdad6",
+                      "outline": "#909097",
+                      "on-secondary": "#472a00",
+                      "on-secondary-container": "#5b3800",
+                      "on-primary": "#283044",
+                      "on-secondary-fixed-variant": "#653e00",
+                      "surface-container": "#1d2022",
+                      "secondary-fixed-dim": "#ffb95f",
+                      "surface-container-highest": "#323537",
+                      "on-tertiary-fixed-variant": "#005048",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-tertiary-container": "#009182",
+                      "primary-container": "#0f172a",
+                      "tertiary-container": "#001c18",
+                      "error": "#ffb4ab",
+                      "surface-bright": "#363a3b",
+                      "surface-container-lowest": "#0b0f10",
+                      "secondary-fixed": "#ffddb8",
+                      "error-container": "#93000a",
+                      "surface-variant": "#323537",
+                      "on-surface": "#e0e3e5",
+                      "tertiary-fixed-dim": "#4fdbc8",
+                      "on-background": "#e0e3e5",
+                      "surface": "#101415",
+                      "outline-variant": "#45464d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "20px",
+                      "margin": "32px",
+                      "xl": "48px",
+                      "unit": "4px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "label-bold": [
+                              "Work Sans"
+                      ],
+                      "display-auction": [
+                              "Manrope"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ],
+                      "price-display": [
+                              "Manrope"
+                      ],
+                      "headline-lg": [
+                              "Manrope"
+                      ],
+                      "headline-md": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-auction": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "price-display": [
+                              "28px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased selection:bg-tertiary selection:text-on-tertiary">
+<!-- TopNavBar -->
+<nav class="bg-slate-950/80 backdrop-blur-xl docked full-width top-0 z-50 border-b border-white/10 shadow-2xl sticky">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="flex items-center gap-lg">
+<a class="text-xl font-black italic tracking-tighter text-amber-500 uppercase" href="#">GALLERY X</a>
+<div class="hidden md:flex gap-md font-manrope font-medium tracking-tight">
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Explore</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Live Auctions</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">How it Works</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300 px-3 py-2 rounded-lg" href="#">Wallet</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm">
+<button class="text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+</div>
+<button class="bg-amber-500 text-slate-950 font-label-bold text-label-bold px-6 py-2 rounded-lg hover:bg-amber-400 transition-colors">
+                    Place Bid
+                </button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full border border-surface-variant cursor-pointer" data-alt="A close-up portrait of a professional male user profile avatar. The subject has a confident expression, set against a neutral dark grey background. The lighting is studio quality, emphasizing a clean, modern aesthetic suitable for a high-end financial or gallery platform. The image should convey trust and security in a dark mode UI context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv1_CCmBVR1RqdMpnUAM5Pqz0L-8CC9iyOJCucJUMoG2iAtx6fndD5rMA7SWCiZEn6y9jygt1o4hLCXOsSIfAjP0WNTlM-h-Mos-XW-tdrY-Ctqlp3ciIS0TIzcyOLbX4frnPKf7wo1WUDDOggV-wFbyxUOk0D46Ju6XETdW8Xo7d5WkzIsoPScKi4QtV8D5i0jTpDfIZSOG_cxH0inoy7T8mMNjxfm3UJ5f7dsXpVeA9lgsIllX3Y6rQtcIkoqbAjl1dr1DwGpII"/>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-7xl mx-auto px-margin py-xl flex flex-col md:flex-row gap-xl">
+<!-- Sidebar Navigation (SaaS Vibe) -->
+<aside class="w-full md:w-64 flex-shrink-0">
+<div class="sticky top-32 space-y-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-lg">Dashboard</h2>
+<nav class="space-y-unit">
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-bold text-label-bold">Overview</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-bold text-label-bold">My Lots</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg bg-surface-variant text-tertiary border-l-2 border-tertiary" href="#">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-bold text-label-bold">Create Auction</span>
+</a>
+<a class="flex items-center gap-sm px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-bold text-label-bold">Transactions</span>
+</a>
+</nav>
+</div>
+</aside>
+<!-- Form Area -->
+<div class="flex-grow max-w-4xl">
+<div class="mb-xl">
+<h1 class="font-display-auction text-display-auction text-on-surface mb-unit">List New Item</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Fill in the details below to schedule your high-end asset for the next live gallery event.</p>
+</div>
+<form class="space-y-xl">
+<!-- Section 1: Visuals -->
+<section class="bg-surface-container-high rounded-xl p-lg border border-outline-variant shadow-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary">photo_library</span>
+                        Asset Media
+                    </h3>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-xl flex flex-col items-center justify-center text-center hover:border-tertiary hover:bg-surface-variant transition-all cursor-pointer group bg-surface">
+<span class="material-symbols-outlined text-5xl text-outline group-hover:text-tertiary mb-sm transition-colors">cloud_upload</span>
+<p class="font-label-bold text-label-bold text-on-surface mb-unit">Drag &amp; Drop high-resolution images here</p>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">or click to browse your files (Max 50MB per image)</p>
+<button class="bg-surface-container-highest text-on-surface font-label-bold text-label-bold px-4 py-2 rounded-lg border border-outline-variant group-hover:border-tertiary transition-colors" type="button">
+                            Select Files
+                        </button>
+</div>
+</section>
+<!-- Section 2: Details -->
+<section class="bg-surface-container-high rounded-xl p-lg border border-outline-variant shadow-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="md:col-span-2">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary">description</span>
+                            Lot Details
+                        </h3>
+</div>
+<div class="md:col-span-2">
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit">Title</label>
+<input class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary transition-colors outline-none font-body-lg text-body-lg" placeholder="e.g., 1968 Rolex Daytona 'Paul Newman'" type="text"/>
+</div>
+<div class="md:col-span-2">
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit">Detailed Description</label>
+<textarea class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary transition-colors outline-none font-body-md text-body-md resize-none" placeholder="Describe the condition, provenance, and specifications..." rows="4"></textarea>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit">Category</label>
+<select class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary transition-colors outline-none font-body-md text-body-md appearance-none">
+<option>Watches</option>
+<option>Fine Art</option>
+<option>Automotive</option>
+<option>Collectibles</option>
+</select>
+</div>
+</section>
+<!-- Section 3: Pricing & Timing -->
+<section class="bg-surface-container-high rounded-xl p-lg border border-outline-variant shadow-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary-container">payments</span>
+                        Pricing &amp; Schedule
+                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Pricing -->
+<div class="space-y-lg">
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit">Starting Bid</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-price-display text-price-display">$</span>
+<input class="w-full bg-surface-container border border-outline-variant rounded-lg pl-10 pr-4 py-3 text-on-surface focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-colors outline-none font-price-display text-price-display" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit flex items-center gap-xs">
+                                    Buy It Now Price <span class="text-outline-variant font-normal">(Optional)</span>
+</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-price-display text-price-display">$</span>
+<input class="w-full bg-surface-container border border-outline-variant rounded-lg pl-10 pr-4 py-3 text-on-surface focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-colors outline-none font-price-display text-price-display" placeholder="0.00" type="number"/>
+</div>
+</div>
+</div>
+<!-- Schedule -->
+<div class="space-y-lg bg-surface rounded-lg p-md border border-outline-variant">
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit">Auction Start Date</label>
+<div class="relative">
+<input class="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary transition-colors outline-none font-body-md text-body-md" style="color-scheme: dark;" type="date"/>
+</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit">Start Time (EST)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary transition-colors outline-none font-body-md text-body-md" style="color-scheme: dark;" type="time"/>
+</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-unit">Duration</label>
+<select class="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary transition-colors outline-none font-body-md text-body-md appearance-none">
+<option>3 Days</option>
+<option>5 Days</option>
+<option>7 Days</option>
+<option>14 Days</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<div class="flex items-center justify-end gap-md pt-lg border-t border-outline-variant">
+<button class="px-6 py-3 rounded-lg font-label-bold text-label-bold text-on-surface hover:bg-surface-variant transition-colors border border-outline-variant" type="button">
+                        Save as Draft
+                    </button>
+<button class="bg-secondary-container text-on-secondary-fixed font-label-bold text-label-bold px-8 py-3 rounded-lg hover:bg-secondary transition-colors shadow-lg flex items-center gap-sm" type="button">
+<span class="material-symbols-outlined">rocket_launch</span>
+                        Schedule Auction
+                    </button>
+</div>
+</form>
+</div>
+</main>
+</body></html>

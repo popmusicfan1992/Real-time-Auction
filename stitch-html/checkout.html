@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout - VANGUARD Auction House</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#363a3b",
+                        "tertiary-container": "#001c18",
+                        "surface-tint": "#bec6e0",
+                        "surface-container-lowest": "#0b0f10",
+                        "on-background": "#e0e3e5",
+                        "on-secondary": "#472a00",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "primary-container": "#0f172a",
+                        "on-tertiary": "#003731",
+                        "on-primary-fixed": "#131b2e",
+                        "on-tertiary-container": "#009182",
+                        "secondary-container": "#ee9800",
+                        "surface-dim": "#101415",
+                        "primary": "#bec6e0",
+                        "on-secondary-fixed": "#2a1700",
+                        "surface-container-low": "#191c1e",
+                        "secondary": "#ffb95f",
+                        "outline": "#909097",
+                        "inverse-on-surface": "#2d3133",
+                        "secondary-fixed": "#ffddb8",
+                        "tertiary-fixed-dim": "#4fdbc8",
+                        "inverse-primary": "#565e74",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "primary-fixed": "#dae2fd",
+                        "surface": "#101415",
+                        "on-error": "#690005",
+                        "outline-variant": "#45464d",
+                        "on-primary": "#283044",
+                        "on-primary-container": "#798098",
+                        "tertiary": "#4fdbc8",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "surface-container-highest": "#323537",
+                        "background": "#101415",
+                        "tertiary-fixed": "#71f8e4",
+                        "on-secondary-container": "#5b3800",
+                        "surface-container": "#1d2022",
+                        "inverse-surface": "#e0e3e5",
+                        "on-tertiary-fixed-variant": "#005048",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#00201c",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#323537",
+                        "surface-container-high": "#272a2c",
+                        "on-surface-variant": "#c6c6cd",
+                        "on-surface": "#e0e3e5",
+                        "primary-fixed-dim": "#bec6e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "48px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "gutter": "20px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "margin": "32px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Work Sans"],
+                        "headline-lg": ["Manrope"],
+                        "price-display": ["Manrope"],
+                        "label-bold": ["Work Sans"],
+                        "headline-md": ["Manrope"],
+                        "display-auction": ["Manrope"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "price-display": ["28px", { "lineHeight": "1", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-bold": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-auction": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar (Suppressed due to Transactional intent - Checkout) -->
+<!-- Navigation intentionally omitted to focus user on completing payment -->
+<!-- Main Content -->
+<main class="flex-grow flex flex-col md:flex-row w-full max-w-[1400px] mx-auto min-h-screen">
+<!-- Left Side: Order Summary -->
+<section class="w-full md:w-1/2 bg-surface-container-lowest p-margin md:p-xl flex flex-col justify-between border-b md:border-b-0 md:border-r border-outline-variant relative overflow-hidden">
+<!-- Background Image overlay -->
+<div class="absolute inset-0 opacity-20 bg-cover bg-center" data-alt="A close-up, dramatic shot of a vintage luxury watch mechanism. The lighting is cinematic, highlighting the intricate gold and silver gears against a deep, dark background. The image evokes a sense of timeless precision, wealth, and sophisticated craftsmanship, perfectly complementing a high-end auction house aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvz1DFt-xyxFj9PNXMyB037Ua47OwNapS3tWBk8_l-seQgd1MpE5_wCf5QNj6ACvcCey6kjmmG97sQopbzgdaTgrI0_TXZ_hTz1gOC2HWEbxHfJeezAhhSIDwI3BZ_qrJXBd0pw8CuoI6iBSqVRE5ZVs7ugUXXCoaZ-LKk271SYv5HKEsld9V8DYeBXKhQCrpFHyxSblrBTzVKgoZRZbuI1UfahSzjw3Lv6rnZwwF24Ti6FVc-8bHHYYPCWM1oa-sNImrGTucWpoE');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/80 to-transparent"></div>
+<div class="relative z-10 flex flex-col h-full">
+<!-- Header -->
+<div class="mb-lg flex justify-between items-center">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Order Summary</h1>
+<span class="bg-secondary text-on-secondary font-label-bold text-label-bold px-sm py-xs rounded-full flex items-center gap-xs shadow-xl">
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">workspace_premium</span>
+                        Winner
+                    </span>
+</div>
+<!-- Won Item Details -->
+<div class="flex-grow flex flex-col justify-center gap-md">
+<div class="rounded-xl overflow-hidden aspect-video relative shadow-2xl">
+<img alt="Won Item" class="w-full h-full object-cover" data-alt="A stunning, high-resolution photograph of a classic vintage luxury watch resting on a dark velvet surface. The lighting is moody and focused, emphasizing the metallic sheen and the amber-colored dial. The setting feels exclusive, echoing the atmosphere of a private viewing room in a prestigious auction gallery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBze9wpeSuo8xHKqoq2jQL7dfg3nyeKaXkQLJaDcI5JxBsY0wU-VZ6n3oqMpGPuJiLolD7llvwkW6uwsTUVupPjiOtGpUoQ6CZYrYYUNuhCqATgy-_Buu6C9LlwutXQqahMAWGF937nKmQOCjVsv3QMHTQ6AVXr340WWjsGH_AUj59vyo3mATtw0oOX2qVdbpeempYLj-bK5JaB_-tkoKUiUhl1zK2ibB0vQta7YlBkTX2Q3uywzegtqXRXzL1JQLIK6hNLHkYLTv0"/>
+<!-- Verification Badge overlay -->
+<div class="absolute bottom-md left-md bg-surface-container-high/90 backdrop-blur-md px-sm py-xs rounded flex items-center gap-xs border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-[#3B82F6]" data-weight="fill">verified</span>
+<span class="font-label-bold text-[10px] uppercase text-on-surface">Verified Authentic</span>
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-sm">
+<p class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-widest">Lot 402</p>
+<h2 class="font-headline-md text-headline-md text-on-surface">Patek Philippe Nautilus Ref. 5711</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Circa 2015, Stainless Steel with Blue Dial. Complete with original box and papers.</p>
+</div>
+</div>
+<!-- Final Breakdown -->
+<div class="mt-xl bg-surface-container p-lg rounded-xl border border-outline-variant/50 backdrop-blur-sm shadow-xl">
+<div class="flex justify-between items-center mb-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">Winning Bid</span>
+<span class="font-price-display text-price-display text-on-surface">$125,000</span>
+</div>
+<div class="flex justify-between items-center mb-md pb-md border-b border-outline-variant">
+<span class="font-body-md text-body-md text-on-surface-variant">Buyer's Premium (15%)</span>
+<span class="font-body-lg text-body-lg text-on-surface">$18,750</span>
+</div>
+<div class="flex justify-between items-end">
+<span class="font-headline-md text-headline-md text-on-surface">Total Due</span>
+<span class="font-display-auction text-display-auction text-secondary">$143,750</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side: Payment Details -->
+<section class="w-full md:w-1/2 bg-surface p-margin md:p-xl flex flex-col overflow-y-auto">
+<div class="max-w-md mx-auto w-full flex-grow flex flex-col justify-center py-xl">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-lg">Payment Details</h2>
+<!-- Express Payment -->
+<button class="w-full bg-[#FFC439] hover:bg-[#F4B828] text-black font-label-bold text-label-bold py-md rounded-lg flex items-center justify-center gap-sm transition-colors mb-lg shadow-lg">
+<span class="material-symbols-outlined" data-weight="fill">credit_card</span>
+                    Pay with PayPal
+                </button>
+<div class="flex items-center gap-sm mb-lg">
+<hr class="flex-grow border-outline-variant"/>
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase">Or pay with card</span>
+<hr class="flex-grow border-outline-variant"/>
+</div>
+<!-- Credit Card Form -->
+<form class="flex flex-col gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-bold text-label-bold text-on-surface-variant" for="cardName">Name on Card</label>
+<input class="bg-surface-container-low border border-outline text-on-surface font-body-md text-body-md rounded-lg p-sm focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition-colors" id="cardName" placeholder="ALEXANDER WRIGHT" type="text"/>
+</div>
+<div class="flex flex-col gap-xs relative">
+<label class="font-label-bold text-label-bold text-on-surface-variant" for="cardNumber">Card Number</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline text-on-surface font-body-md text-body-md rounded-lg p-sm pl-xl focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition-colors" id="cardNumber" placeholder="0000 0000 0000 0000" type="text"/>
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">credit_card</span>
+</div>
+</div>
+<div class="flex gap-md">
+<div class="flex flex-col gap-xs w-1/2">
+<label class="font-label-bold text-label-bold text-on-surface-variant" for="expiry">Expiry</label>
+<input class="bg-surface-container-low border border-outline text-on-surface font-body-md text-body-md rounded-lg p-sm focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition-colors" id="expiry" placeholder="MM/YY" type="text"/>
+</div>
+<div class="flex flex-col gap-xs w-1/2">
+<label class="font-label-bold text-label-bold text-on-surface-variant" for="cvc">CVC</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline text-on-surface font-body-md text-body-md rounded-lg p-sm focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition-colors" id="cvc" placeholder="123" type="text"/>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-outline text-[18px]">help</span>
+</div>
+</div>
+</div>
+<div class="mt-lg">
+<button class="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white font-headline-md text-headline-md py-md rounded-lg transition-colors shadow-2xl flex items-center justify-center gap-sm group" type="submit">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">lock</span>
+                            Confirm Payment
+                        </button>
+</div>
+</form>
+<!-- Trust Badges -->
+<div class="mt-xl flex flex-col items-center gap-sm text-outline">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-[24px]">lock</span>
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+<span class="font-label-bold text-[12px] uppercase tracking-widest text-on-surface-variant">Stripe Secured</span>
+</div>
+<p class="font-body-md text-[12px] text-center max-w-[300px]">Payments are processed securely. Vanguard does not store your full credit card details.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer (Suppressed due to Transactional intent - Checkout) -->
+<!-- Footer intentionally omitted to keep focus on the checkout form -->
+</body></html>

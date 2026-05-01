@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign In - GALLERY X</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#bec6e0",
+                      "tertiary-fixed": "#71f8e4",
+                      "secondary-container": "#ee9800",
+                      "primary-fixed": "#dae2fd",
+                      "secondary": "#ffb95f",
+                      "tertiary": "#4fdbc8",
+                      "inverse-surface": "#e0e3e5",
+                      "inverse-primary": "#565e74",
+                      "surface-container-high": "#272a2c",
+                      "on-secondary-fixed": "#2a1700",
+                      "on-tertiary-fixed": "#00201c",
+                      "surface-dim": "#101415",
+                      "background": "#101415",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-surface-variant": "#c6c6cd",
+                      "surface-container-low": "#191c1e",
+                      "on-primary-fixed": "#131b2e",
+                      "on-primary-container": "#798098",
+                      "on-tertiary": "#003731",
+                      "inverse-on-surface": "#2d3133",
+                      "on-error": "#690005",
+                      "primary": "#bec6e0",
+                      "on-error-container": "#ffdad6",
+                      "outline": "#909097",
+                      "on-secondary": "#472a00",
+                      "on-secondary-container": "#5b3800",
+                      "on-primary": "#283044",
+                      "on-secondary-fixed-variant": "#653e00",
+                      "surface-container": "#1d2022",
+                      "secondary-fixed-dim": "#ffb95f",
+                      "surface-container-highest": "#323537",
+                      "on-tertiary-fixed-variant": "#005048",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "on-tertiary-container": "#009182",
+                      "primary-container": "#0f172a",
+                      "tertiary-container": "#001c18",
+                      "error": "#ffb4ab",
+                      "surface-bright": "#363a3b",
+                      "surface-container-lowest": "#0b0f10",
+                      "secondary-fixed": "#ffddb8",
+                      "error-container": "#93000a",
+                      "surface-variant": "#323537",
+                      "on-surface": "#e0e3e5",
+                      "tertiary-fixed-dim": "#4fdbc8",
+                      "on-background": "#e0e3e5",
+                      "surface": "#101415",
+                      "outline-variant": "#45464d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "20px",
+                      "margin": "32px",
+                      "xl": "48px",
+                      "unit": "4px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "label-bold": [
+                              "Work Sans"
+                      ],
+                      "display-auction": [
+                              "Manrope"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ],
+                      "price-display": [
+                              "Manrope"
+                      ],
+                      "headline-lg": [
+                              "Manrope"
+                      ],
+                      "headline-md": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-auction": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "price-display": [
+                              "28px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex selection:bg-secondary-container selection:text-on-secondary-container">
+<div class="w-full lg:w-5/12 xl:w-1/3 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-20 relative z-10 bg-surface-container-low border-r border-outline-variant shadow-2xl">
+<div class="absolute top-8 left-8 sm:left-12 lg:left-20">
+<a class="font-display-auction text-[20px] font-black italic tracking-tighter text-secondary uppercase hover:text-secondary-fixed transition-colors" href="#">
+                GALLERY X
+            </a>
+</div>
+<div class="max-w-sm w-full mx-auto mt-16 lg:mt-0">
+<div class="mb-10">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Welcome Back</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter your details to access high-stakes bidding.</p>
+</div>
+<button class="w-full flex items-center justify-center gap-3 bg-surface-container border border-outline-variant text-on-surface py-3 px-4 rounded-xl hover:bg-surface-container-highest hover:border-outline transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-tertiary focus:ring-offset-2 focus:ring-offset-background mb-8" type="button">
+<svg class="w-5 h-5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+<span class="font-label-bold text-label-bold">Continue with Google</span>
+</button>
+<div class="relative flex items-center mb-8">
+<div class="flex-grow border-t border-outline-variant"></div>
+<span class="flex-shrink-0 mx-4 font-body-md text-[12px] uppercase tracking-widest text-on-surface-variant font-medium">Or log in with email</span>
+<div class="flex-grow border-t border-outline-variant"></div>
+</div>
+<form action="#" class="space-y-5" method="POST">
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2" for="email">Email address</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</span>
+<input autocomplete="email" class="appearance-none block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-body-md" id="email" name="email" placeholder="collector@galleryx.com" required="" type="email"/>
+</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2" for="password">Password</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</span>
+<input autocomplete="current-password" class="appearance-none block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-body-md" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<div class="flex items-center justify-between mt-4 mb-6">
+<div class="flex items-center">
+<input class="h-4 w-4 rounded border-outline-variant bg-surface-container-highest text-tertiary focus:ring-tertiary focus:ring-offset-background" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block font-body-md text-[14px] text-on-surface-variant" for="remember-me">Remember me</label>
+</div>
+<div class="text-sm">
+<a class="font-label-bold text-[14px] text-secondary hover:text-secondary-fixed transition-colors" href="#">Forgot your password?</a>
+</div>
+</div>
+<div>
+<button class="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-[0_0_20px_rgba(238,152,0,0.15)] font-label-bold text-label-bold text-on-secondary bg-secondary hover:bg-secondary-fixed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary focus:ring-offset-background transition-all duration-300" type="submit">
+                        Sign In Securely
+                        <span class="material-symbols-outlined ml-2 text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+<p class="mt-8 text-center font-body-md text-[14px] text-on-surface-variant">
+                Don't have an account? 
+                <a class="font-label-bold text-secondary hover:text-secondary-fixed transition-colors ml-1" href="#">Apply for Membership</a>
+</p>
+</div>
+</div>
+<div class="hidden lg:block lg:w-7/12 xl:w-2/3 relative overflow-hidden bg-surface-container-lowest">
+<div class="absolute inset-0 bg-gradient-to-tr from-background/90 via-background/40 to-transparent z-10 mix-blend-multiply"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 opacity-80"></div>
+<img class="absolute inset-0 w-full h-full object-cover object-center opacity-70 filter contrast-125 saturate-50" data-alt="A high-stakes, adrenaline-fueled moment in a modern, dark-mode luxury auction house. A sharply dressed individual is illuminated by the intense, cold glow of multiple computer screens, raising a fist in triumph after winning a multi-million dollar live bid. The scene is shot with high-end, cinematic lighting, emphasizing deep navy shadows, sleek glass surfaces, and a striking beam of warm gold light cutting across the background to highlight the tension. The atmosphere is tense, sophisticated, and undeniably premium, perfectly capturing the exhilaration of victory in the world of high finance and exclusive art collection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtpTYRv_q3zpnn-2zS25wXMUUd1y9Acm0RqjCik3PI5kVRyDpK_kp1WLzoR3G5xI8Z-wO6Moy70lzJvkUbUqGmx0jebA88MKobxHZ2FuzUs_olalwfEJzP5RMuZ6xAa5J681hZKSmr7alyVu1rn1bHVA9nzPXhuSfPIfaaPVvIjzLOuwxscwWZlrCLwzrhQ_QczupsfBkdWmzYbQjgRPqvyfr1MlSm1l5QeYYtj73ZCx8fzXbCyhHfbvEF_z_6fna8hbfFqojvCzs"/>
+<div class="absolute bottom-20 left-20 z-20 max-w-xl">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md border border-outline-variant mb-6 shadow-lg">
+<div class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></div>
+<span class="font-label-bold text-[12px] uppercase tracking-widest text-on-surface">Secure Connection</span>
+</div>
+<h2 class="font-display-auction text-display-auction text-on-background mb-4">
+                The Thrill of the <span class="text-secondary italic">Final Second.</span>
+</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
+                Experience the adrenaline of live bidding. Secure your place among elite collectors and secure the world's most coveted assets.
+            </p>
+</div>
+</div>
+</body></html>

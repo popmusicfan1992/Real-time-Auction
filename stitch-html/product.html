@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GALLERY X - Product Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#bec6e0",
+                    "tertiary-fixed": "#71f8e4",
+                    "secondary-container": "#ee9800",
+                    "primary-fixed": "#dae2fd",
+                    "secondary": "#ffb95f",
+                    "tertiary": "#4fdbc8",
+                    "inverse-surface": "#e0e3e5",
+                    "inverse-primary": "#565e74",
+                    "surface-container-high": "#272a2c",
+                    "on-secondary-fixed": "#2a1700",
+                    "on-tertiary-fixed": "#00201c",
+                    "surface-dim": "#101415",
+                    "background": "#101415",
+                    "primary-fixed-dim": "#bec6e0",
+                    "on-surface-variant": "#c6c6cd",
+                    "surface-container-low": "#191c1e",
+                    "on-primary-fixed": "#131b2e",
+                    "on-primary-container": "#798098",
+                    "on-tertiary": "#003731",
+                    "inverse-on-surface": "#2d3133",
+                    "on-error": "#690005",
+                    "primary": "#bec6e0",
+                    "on-error-container": "#ffdad6",
+                    "outline": "#909097",
+                    "on-secondary": "#472a00",
+                    "on-secondary-container": "#5b3800",
+                    "on-primary": "#283044",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "surface-container": "#1d2022",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "surface-container-highest": "#323537",
+                    "on-tertiary-fixed-variant": "#005048",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "on-tertiary-container": "#009182",
+                    "primary-container": "#0f172a",
+                    "tertiary-container": "#001c18",
+                    "error": "#ffb4ab",
+                    "surface-bright": "#363a3b",
+                    "surface-container-lowest": "#0b0f10",
+                    "secondary-fixed": "#ffddb8",
+                    "error-container": "#93000a",
+                    "surface-variant": "#323537",
+                    "on-surface": "#e0e3e5",
+                    "tertiary-fixed-dim": "#4fdbc8",
+                    "on-background": "#e0e3e5",
+                    "surface": "#101415",
+                    "outline-variant": "#45464d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "20px",
+                    "margin": "32px",
+                    "xl": "48px",
+                    "unit": "4px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-bold": [
+                            "Work Sans"
+                    ],
+                    "display-auction": [
+                            "Manrope"
+                    ],
+                    "body-lg": [
+                            "Work Sans"
+                    ],
+                    "price-display": [
+                            "Manrope"
+                    ],
+                    "headline-lg": [
+                            "Manrope"
+                    ],
+                    "headline-md": [
+                            "Manrope"
+                    ],
+                    "body-md": [
+                            "Work Sans"
+                    ]
+            },
+            "fontSize": {
+                    "label-bold": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-auction": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "price-display": [
+                            "28px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<nav class="bg-slate-950/80 backdrop-blur-xl docked full-width top-0 z-50 border-b border-white/10 shadow-2xl sticky w-full">
+<div class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="text-xl font-black italic tracking-tighter text-amber-500 uppercase">
+                GALLERY X
+            </div>
+<div class="hidden md:flex items-center gap-8 font-manrope font-medium tracking-tight">
+<a class="text-amber-500 border-b-2 border-amber-500 pb-1 hover:bg-white/5 transition-all duration-300 opacity-80 scale-95" href="#">Live Auctions</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300" href="#">Explore</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300" href="#">How it Works</a>
+<a class="text-slate-400 hover:text-white transition-colors hover:bg-white/5 transition-all duration-300" href="#">Wallet</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+</button>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full border border-slate-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKLIf_4kJSyAtYLnBlEqhMiQPtmqw6SQ3wBa4zvenOQT5hthkPlB7Z0Yzoj-kiXxZ82PYRDUjcIlNyhTElNbv1d5y060NaoFL6Q7BUpwq-lfFUG0ybibNQnmxotoRSvGZImhrPUL83z4xelFTGkHT7vS4x1snEqxJOop4rrb-cnRPKibz6OJcDIh-UWQfLSMWMH5rpDcEVr3sFkqiTHg4Q9ZAZNwPOCn9-vGxhrWgpdAYAELypEKJdhOdltCXjFTW97MNqhd-NdTI"/>
+<button class="hidden md:flex bg-secondary-container text-on-secondary font-label-bold text-label-bold px-4 py-2 rounded-lg items-center gap-2 hover:bg-secondary transition-colors">
+                    Place Bid
+                </button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-7xl mx-auto px-4 md:px-margin py-xl grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Gallery & Details -->
+<div class="lg:col-span-7 flex flex-col gap-lg">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 text-on-surface-variant font-body-md text-body-md mb-2">
+<a class="hover:text-amber-500 transition-colors" href="#">Auctions</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-amber-500 transition-colors" href="#">Vintage Cameras</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Lot #402</span>
+</div>
+<!-- Main Image Gallery (Bento-ish) -->
+<div class="grid grid-cols-4 gap-sm">
+<div class="col-span-4 aspect-[4/3] rounded-xl overflow-hidden relative group bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A high-resolution, striking macro photograph of a rare vintage Leica M3 camera resting on a sleek dark surface. The camera is illuminated by soft, moody, high-contrast studio lighting that highlights the textured leather grip and pristine metal dials. The background is a deep, luxurious navy gradient typical of a high-end auction house catalog. The image exudes a sophisticated, dark-mode-first aesthetic, emphasizing the mechanical perfection and historical value of the item." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB01fcZztq5_Uv4ic9Oz2FFj6ByRtgRwcojh4iDaLR_iexI_DG2nBoU-I4MS03N3omhdFOhTKQomKHRMhvt-T8jwp_a0Qs8AhPJelmoHo_FcupNNjjNNRdpfief3dNJeQ34mLCXh4lZJfvLEqMMtG6AAWjo9-SDO1nrOGc2fjImTF21WUx_UVumygatmSRp7UMYiAFAlsDpueqYoVEIM0VwKtlvjsCZJ_1_UpvcwSvHFmiF8c5YBFW438Nxa69kpUGG5ppHrItEpx4"/>
+<button class="absolute top-4 right-4 bg-background/50 backdrop-blur-md p-2 rounded-full text-on-surface hover:text-amber-500 transition-colors">
+<span class="material-symbols-outlined" data-weight="fill">favorite</span>
+</button>
+</div>
+<div class="col-span-1 aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-amber-500 opacity-100">
+<img class="w-full h-full object-cover" data-alt="A close-up detail shot of the vintage camera lens, showing the glass reflections and aperture ring. Moody lighting against a dark slate background, matching the premium auction house style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEf7rVzRxz3zqEKbR6iXVhWjHQIiPP9jxat124PquadgJn15CuUMxoIvxPUgYvpxZlr2jmok3JNETWLJmZE8IISDYZC3KmeGfAvT8XMPjP1VkeKPB9C3VK73a_29FtEm6olhJIPXjocja0qU5LQliAjYF2_cedkaq6VGmz-WVKJfW2N8f2Cwc2_t_9GTKHLiTlQ81oZXGERPwAeaEXw-x7BuNEd6PgL4q6Xtx7iZKecFpIJ8RBhbraLMUcCuLTNnK25Mtvg9WuRnc"/>
+</div>
+<div class="col-span-1 aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-surface-variant opacity-60 hover:opacity-100 transition-all">
+<img class="w-full h-full object-cover" data-alt="A top-down view of the vintage camera, focusing on the film advance lever and shutter speed dial. Deep shadows and crisp highlights create a technological, sophisticated look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCigzSyaUez8VKt3oNZGzv0eS4WE36unGIjAQX5tTQX_x3rUD8VPUyoeqYFuEI4TqScb6vng1ezUCefQFww5kiayKTTu-144bNt8BnC0645L542UxPo0cINXxrXAxdDvrePNpnD-HMDHP3ZDR4s8k3VWHI_A7sLNaDuQ8sN6g0iT-J_qw6dRlPYKJ0dAAz8OX4ht6dMbe_2i18iS3uUqbmebgdLSseHJgvNOqKO-Khclp7ekg80-zKG1Ro4b5RpKPyd4IFsMYgyim8"/>
+</div>
+<div class="col-span-1 aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-surface-variant opacity-60 hover:opacity-100 transition-all">
+<img class="w-full h-full object-cover" data-alt="A detailed shot of the back of the vintage camera, showing the viewfinder window and leather casing. Lit softly against a dark background to emphasize texture and craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8vx3D_LVYnddskUkIEuUtXn1i0UcdkC3Ky7Nm7CONJOg7ZMmEQ20ByxAfdqvRfEFOltUIGZMOqh7VrXLMf1vgmD7e_AGhFiRBn0fP2RClX9pgeUp5qwGPFC-MHuOxq6kstFQ_Dw6yYRYvud0mmaq8JYm13Tb8POBOgh6F6Mlx5ctw2IWlWN7gkuy2i_XCcvNAcypiHURNtrKcCcMSGNXRhVHqe56pOi8ABhEvnix_UmtCa4Ny1t74g2a4N2ijMdoFy8_P3xj3GWI"/>
+</div>
+<div class="col-span-1 aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-surface-variant opacity-60 hover:opacity-100 transition-all relative flex items-center justify-center bg-surface-container-highest">
+<img class="w-full h-full object-cover opacity-30" data-alt="A blurred background image of the vintage camera, used as a backdrop for a '+5 More' indicator." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDHGD2--QA-ePuCIwd-qBiiT_mJBG1YKTgJlngJ1MpTXBiq9sNxSpTgFsAvBLdkzW-vCINNTt4a3_JTDNCW_lqd0wdE9cvxZTu5_POWjOlB_qF0m0BG9T7qF8Kt7u4C_eSLhTO8KAauTjdxojvNSlXkRd2inPAbD8TVQG74Kx3oU6-OkGdPryTB4Fw_v_WdOlqjKHv8tK4rl0QVnvsUXGnuYvABH60l2un62kAfXB8zHvzErng7ZQZpO9dByCUoBwbg5EoTCYnDdg"/>
+<span class="absolute font-label-bold text-label-bold text-on-surface">+5 More</span>
+</div>
+</div>
+<!-- Description Section -->
+<div class="mt-lg border-t border-surface-variant pt-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">Lot Description</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-6">
+                    A remarkably preserved example of the legendary Leica M3, arguably the finest mechanical rangefinder ever produced. This specific unit, serial number #1045982, originates from a coveted 1959 production run and features the rare single-stroke advance mechanism.
+                </p>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                    The camera has been fully CLA'd (Cleaned, Lubricated, Adjusted) by a master technician in Wetzlar, Germany. The vulcanite covering is original and completely intact without cracks. The viewfinder is bright, with exceptionally contrasty patch alignment. Includes the original Summicron 50mm f/2 collapsible lens.
+                </p>
+<div class="grid grid-cols-2 gap-4 mt-8">
+<div class="bg-surface-container p-4 rounded-lg">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase block mb-1">Manufacturer</span>
+<span class="font-body-lg text-body-lg text-on-surface">Leitz Wetzlar</span>
+</div>
+<div class="bg-surface-container p-4 rounded-lg">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase block mb-1">Year</span>
+<span class="font-body-lg text-body-lg text-on-surface">1959</span>
+</div>
+<div class="bg-surface-container p-4 rounded-lg">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase block mb-1">Condition</span>
+<span class="font-body-lg text-body-lg text-on-surface">Mint / Ex+++</span>
+</div>
+<div class="bg-surface-container p-4 rounded-lg">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase block mb-1">Provenance</span>
+<span class="font-body-lg text-body-lg text-on-surface">Private Estate, UK</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Bidding Panel / Waiting Room -->
+<div class="lg:col-span-5 relative">
+<!-- Sticky Container for the Bid Panel -->
+<div class="sticky top-[100px] bg-surface-container-low rounded-xl border border-surface-variant p-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)] relative overflow-hidden">
+<!-- Glassmorphic Overlay for "Waiting Room" Feel -->
+<div class="absolute inset-0 bg-primary-container/10 backdrop-blur-[2px] z-0 pointer-events-none"></div>
+<div class="relative z-10">
+<!-- Title & Badge -->
+<div class="flex items-start justify-between gap-4 mb-4">
+<h1 class="font-display-auction text-display-auction text-on-surface">1959 Leica M3 <br/> Single Stroke</h1>
+<div class="flex flex-col items-end gap-2">
+<span class="inline-flex items-center gap-1 bg-tertiary-container text-tertiary-fixed px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border border-tertiary/30">
+<span class="material-symbols-outlined text-[12px]" data-weight="fill">verified_user</span>
+                                Verified
+                            </span>
+<span class="inline-flex items-center gap-1 bg-surface-variant text-on-surface px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border border-outline-variant">
+                                Lot #402
+                            </span>
+</div>
+</div>
+<!-- Auction Status / Urgency -->
+<div class="flex items-center gap-2 mb-8 bg-surface-container-highest p-3 rounded-lg border border-surface-variant">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-error"></span>
+</span>
+<span class="font-label-bold text-label-bold text-error uppercase tracking-widest">Opening Soon</span>
+<span class="text-on-surface-variant mx-2">|</span>
+<span class="font-label-bold text-label-bold text-on-surface">Starts in 02:45:10</span>
+</div>
+<!-- Price Estimate -->
+<div class="mb-8">
+<span class="font-label-bold text-label-bold text-on-surface-variant uppercase block mb-2">Estimated Value</span>
+<div class="font-price-display text-price-display text-on-surface">
+                            $12,000 - $15,000 USD
+                        </div>
+<div class="text-on-surface-variant text-sm mt-1">Starting Bid: $8,500 USD</div>
+</div>
+<!-- Action Area -->
+<div class="bg-surface-dim p-6 rounded-xl border border-surface-variant mb-6 text-center">
+<span class="material-symbols-outlined text-4xl text-amber-500 mb-2">vpn_key</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Secure Your Spot</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                            This is a high-demand lot. A refundable deposit is required to enter the live bidding room.
+                        </p>
+<button class="w-full bg-secondary-container hover:bg-secondary text-on-secondary font-label-bold text-label-bold py-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg mb-4">
+                            Deposit $500 to Enter Room
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="w-full bg-transparent border border-outline text-on-surface hover:border-tertiary hover:text-tertiary font-label-bold text-label-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300">
+<span class="material-symbols-outlined">notifications</span>
+                            Set Reminder
+                        </button>
+</div>
+<!-- Trust Signals -->
+<div class="flex justify-center gap-6 mt-6 border-t border-surface-variant pt-6">
+<div class="flex items-center gap-2 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+<span>Secure Escrow</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<span>Insured Transit</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-slate-950 w-full py-12 mt-auto border-t border-slate-900 flat no shadows">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto gap-6 font-manrope text-xs tracking-wide">
+<div class="text-lg font-black text-slate-200">
+                GALLERY X
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Consign with Us</a>
+<a class="text-slate-500 hover:text-amber-500 transition-colors" href="#">Affiliate Program</a>
+</div>
+<div class="text-slate-500">
+                © 2024 GALLERY X AUCTION HOUSE. ALL RIGHTS RESERVED.
+            </div>
+</div>
+</footer>
+</body></html>

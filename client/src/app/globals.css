@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+/* ============================================
+   GALLERY X - Design System from Google Stitch
+   Premium Real-Time Auction Platform
+   ============================================ */
+
+@theme {
+  /* === Color Palette (Material Design 3 - Dark Mode) === */
+  --color-surface-tint: #bec6e0;
+  --color-tertiary-fixed: #71f8e4;
+  --color-secondary-container: #ee9800;
+  --color-primary-fixed: #dae2fd;
+  --color-secondary: #ffb95f;
+  --color-tertiary: #4fdbc8;
+  --color-inverse-surface: #e0e3e5;
+  --color-inverse-primary: #565e74;
+  --color-surface-container-high: #272a2c;
+  --color-on-secondary-fixed: #2a1700;
+  --color-on-tertiary-fixed: #00201c;
+  --color-surface-dim: #101415;
+  --color-background: #101415;
+  --color-primary-fixed-dim: #bec6e0;
+  --color-on-surface-variant: #c6c6cd;
+  --color-surface-container-low: #191c1e;
+  --color-on-primary-fixed: #131b2e;
+  --color-on-primary-container: #798098;
+  --color-on-tertiary: #003731;
+  --color-inverse-on-surface: #2d3133;
+  --color-on-error: #690005;
+  --color-primary: #bec6e0;
+  --color-on-error-container: #ffdad6;
+  --color-outline: #909097;
+  --color-on-secondary: #472a00;
+  --color-on-secondary-container: #5b3800;
+  --color-on-primary: #283044;
+  --color-on-secondary-fixed-variant: #653e00;
+  --color-surface-container: #1d2022;
+  --color-secondary-fixed-dim: #ffb95f;
+  --color-surface-container-highest: #323537;
+  --color-on-tertiary-fixed-variant: #005048;
+  --color-on-primary-fixed-variant: #3f465c;
+  --color-on-tertiary-container: #009182;
+  --color-primary-container: #0f172a;
+  --color-tertiary-container: #001c18;
+  --color-error: #ffb4ab;
+  --color-surface-bright: #363a3b;
+  --color-surface-container-lowest: #0b0f10;
+  --color-secondary-fixed: #ffddb8;
+  --color-error-container: #93000a;
+  --color-surface-variant: #323537;
+  --color-on-surface: #e0e3e5;
+  --color-tertiary-fixed-dim: #4fdbc8;
+  --color-on-background: #e0e3e5;
+  --color-surface: #101415;
+  --color-outline-variant: #45464d;
+
+  /* === Spacing === */
+  --spacing-gutter: 20px;
+  --spacing-margin: 32px;
+
+  /* === Typography - Font Families === */
+  --font-display-auction: "Manrope", sans-serif;
+  --font-headline-lg: "Manrope", sans-serif;
+  --font-headline-md: "Manrope", sans-serif;
+  --font-price-display: "Manrope", sans-serif;
+  --font-body-lg: "Work Sans", sans-serif;
+  --font-body-md: "Work Sans", sans-serif;
+  --font-label-bold: "Work Sans", sans-serif;
+
+  /* === Border Radius (Soft/Professional) === */
+  --radius-xl: 0.5rem;
+}
+
+/* === Custom Animations === */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* === Utility Animations === */
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
+.animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+.animate-slide-in { animation: slide-in 0.4s ease-out forwards; }
+
+@keyframes slide-in {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* === Selection Colors === */
+::selection {
+  background-color: rgba(238, 152, 0, 0.3);
+  color: #ffb95f;
+}
+
+/* === Scrollbar Styling === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #101415;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #45464d;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #909097;
+}
+
+/* === Material Symbols === */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* === Cursor Pointer for Clickable Elements === */
+a,
+button,
+select,
+summary,
+label[for],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"],
+[role="button"],
+[role="tab"],
+[role="link"],
+[role="menuitem"],
+[onclick],
+.cursor-pointer {
+  cursor: pointer;
+}
+
