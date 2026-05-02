@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import useSWR from "swr";
+import Link from "next/link";
 import api from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import DepositModal from "@/components/wallet/DepositModal";
 import WithdrawModal from "@/components/wallet/WithdrawModal";
 import ManageCardsModal from "@/components/wallet/ManageCardsModal";
@@ -10,13 +12,58 @@ import ManageCardsModal from "@/components/wallet/ManageCardsModal";
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
 export default function WalletPage() {
-  const { data: wallet, error, mutate } = useSWR("/wallet", fetcher, { refreshInterval: 5000 });
+  const { user, logout } = useAuth();
+  const { data: wallet, error, mutate } = useSWR(user ? "/wallet" : null, fetcher, { refreshInterval: 5000 });
   const [isDepositModalOpen, setDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setWithdrawModalOpen] = useState(false);
   const [isManageCardsOpen, setManageCardsOpen] = useState(false);
 
-  if (error) return <div className="text-center pt-24 text-error">Failed to load wallet data</div>;
-  if (!wallet) return <div className="text-center pt-24">Loading wallet...</div>;
+  if (!user) {
+    return (
+      <div className="max-w-md mx-auto text-center pt-24 px-6 space-y-4">
+        <span className="material-symbols-outlined text-[48px] text-on-surface-variant/30">lock</span>
+        <h2 className="font-headline-md text-2xl font-bold text-on-surface">Sign in required</h2>
+        <p className="text-on-surface-variant">Please log in to access your wallet.</p>
+        <Link href="/login" className="inline-block bg-secondary text-on-secondary px-8 py-2.5 rounded-full font-label-bold text-sm shadow-md hover:bg-secondary-fixed transition-colors">
+          Sign In
+        </Link>
+      </div>
+    );
+  }
+
+  if (error) {
+    const is401 = error?.response?.status === 401;
+    return (
+      <div className="max-w-md mx-auto text-center pt-24 px-6 space-y-4">
+        <span className="material-symbols-outlined text-[48px] text-error/50">warning</span>
+        <h2 className="font-headline-md text-2xl font-bold text-on-surface">
+          {is401 ? "Session expired" : "Failed to load wallet"}
+        </h2>
+        <p className="text-on-surface-variant">
+          {is401 
+            ? "Your session has expired. Please log in again to access your wallet." 
+            : "Something went wrong loading your wallet data. Please try again."}
+        </p>
+        {is401 ? (
+          <button 
+            onClick={() => { logout(); window.location.href = "/login"; }}
+            className="inline-block bg-secondary text-on-secondary px-8 py-2.5 rounded-full font-label-bold text-sm shadow-md hover:bg-secondary-fixed transition-colors"
+          >
+            Log In Again
+          </button>
+        ) : (
+          <button 
+            onClick={() => mutate()}
+            className="inline-block bg-surface-variant text-on-surface px-8 py-2.5 rounded-full font-label-bold text-sm hover:bg-surface-container-highest transition-colors"
+          >
+            Retry
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  if (!wallet) return <div className="text-center pt-24 text-on-surface-variant">Loading wallet...</div>;
 
   return (
     <div className="max-w-5xl mx-auto w-full px-6 space-y-8 pb-20">
@@ -25,7 +72,8 @@ export default function WalletPage() {
         onClose={() => {
           setDepositModalOpen(false);
           mutate();
-        }} 
+        }}
+        onDepositSuccess={() => mutate()}
       />
       <WithdrawModal
         isOpen={isWithdrawModalOpen}

@@ -277,7 +277,7 @@ export default function AuctionsPage() {
       {/* Right Content Area */}
       <div className="flex-grow space-y-8">
         {/* Header & Tabs */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-outline-variant pb-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-outline-variant pb-4 animate-fade-in">
           <div>
             <h1 className="font-display-auction text-5xl font-extrabold text-on-surface mb-2">Explore Catalog</h1>
             <p className="font-body-lg text-lg text-on-surface-variant">Discover extraordinary items from around the globe.</p>
@@ -302,6 +302,28 @@ export default function AuctionsPage() {
             </button>
           </div>
         </div>
+
+        {/* Stats Summary Bar */}
+        {counts && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up">
+            <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">Total Auctions</p>
+              <p className="font-price-display text-2xl text-on-surface">{counts.total}</p>
+            </div>
+            <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">🔴 Active Now</p>
+              <p className="font-price-display text-2xl text-red-400">{counts.byStatus.find(s => s.status === "ACTIVE")?.count ?? 0}</p>
+            </div>
+            <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">📅 Upcoming</p>
+              <p className="font-price-display text-2xl text-blue-400">{counts.byStatus.find(s => s.status === "SCHEDULED")?.count ?? 0}</p>
+            </div>
+            <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">✅ Completed</p>
+              <p className="font-price-display text-2xl text-tertiary">{counts.byStatus.find(s => s.status === "ENDED")?.count ?? 0}</p>
+            </div>
+          </div>
+        )}
 
         {/* Loading State */}
         {loading && (
@@ -335,7 +357,7 @@ export default function AuctionsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Featured Card (only for Live tab) */}
             {featured && (
-              <div className="lg:col-span-2 bg-surface-container-high/40 backdrop-blur-sm border border-outline/10 rounded-xl overflow-hidden group relative flex flex-col md:flex-row hover:border-outline/30 transition-all">
+              <div className="lg:col-span-2 bg-surface-container-high/40 backdrop-blur-sm border border-outline/10 rounded-xl overflow-hidden group relative flex flex-col md:flex-row hover:border-outline/30 transition-all animate-pop-in hover-glow">
                 <div className="absolute top-4 left-4 z-10 flex gap-2">
                   <div className="bg-red-500/90 text-white px-3 py-1 rounded-full flex items-center gap-2 font-label-bold text-[12px] shadow-lg">
                     <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
@@ -392,7 +414,7 @@ export default function AuctionsPage() {
             {standardItems.map((auction) => (
               <div
                 key={auction.id}
-                className="bg-surface-container-high/40 backdrop-blur-sm border border-outline/10 rounded-xl overflow-hidden group flex flex-col hover:border-outline/30 transition-all"
+                className="bg-surface-container-high/40 backdrop-blur-sm border border-outline/10 rounded-xl overflow-hidden group flex flex-col hover:border-outline/30 transition-all hover-scale hover-glow animate-fade-in"
               >
                 <Link href={`/auctions/${auction.id}`} className="relative h-64 overflow-hidden bg-surface-container block">
                   <div className="absolute top-3 left-3 z-10 flex gap-2">
@@ -423,22 +445,39 @@ export default function AuctionsPage() {
                 </Link>
                 <div className="p-5 flex-grow flex flex-col justify-between">
                   <div className="mb-4">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <span className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider border border-outline/30 px-1.5 py-0.5 rounded">
                         {auction._count.bids} bids
                       </span>
                       <span className="text-[10px] font-label-bold text-tertiary uppercase tracking-wider">
                         {CATEGORY_LABELS[auction.category] || auction.category}
                       </span>
+                      {auction.buyNowPrice && auction.status === "ACTIVE" && (
+                        <span className="text-[10px] font-label-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded">
+                          ⚡ Buy Now
+                        </span>
+                      )}
                     </div>
                     <Link href={`/auctions/${auction.id}`}>
                       <h3 className="font-headline-md text-2xl font-semibold text-on-surface leading-snug line-clamp-2 hover:text-amber-500 transition-colors">
                         {auction.title}
                       </h3>
                     </Link>
+                    <p className="font-body-md text-sm text-on-surface-variant line-clamp-2 mt-1.5">{auction.description}</p>
+                    {/* Seller info */}
+                    <div className="flex items-center gap-2 mt-3">
+                      <div className="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-outline/20">
+                        {auction.seller.avatar ? (
+                          <img src={auction.seller.avatar} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="material-symbols-outlined text-[14px] text-on-surface-variant">person</span>
+                        )}
+                      </div>
+                      <span className="text-[11px] text-on-surface-variant font-label-bold">{auction.seller.name}</span>
+                    </div>
                   </div>
                   <div>
-                    <div className="flex justify-between items-end mb-4">
+                    <div className="flex justify-between items-end mb-3">
                       <div>
                         <p className="font-label-bold text-xs text-on-surface-variant mb-0.5">
                           {auction.status === "ENDED" ? "Final Price" : "Current Bid"}
@@ -462,6 +501,12 @@ export default function AuctionsPage() {
                           <span className="material-symbols-outlined text-outline text-2xl">gavel</span>
                         )}
                       </div>
+                    </div>
+                    {/* Extra info row */}
+                    <div className="flex justify-between items-center mb-3 text-[11px] text-on-surface-variant border-t border-outline/10 pt-2">
+                      <span>Start: ${parseFloat(auction.startingPrice).toLocaleString()}</span>
+                      <span>Deposit: ${parseFloat(auction.depositAmount).toLocaleString()}</span>
+                      {auction.buyNowPrice && <span className="text-amber-400">Buy Now: ${parseFloat(auction.buyNowPrice).toLocaleString()}</span>}
                     </div>
 
                     {auction.status === "ACTIVE" ? (

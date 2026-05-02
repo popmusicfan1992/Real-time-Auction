@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { placeBid } from "@/controllers/bid.controller";
+import { placeBid, buyNow } from "@/controllers/bid.controller";
 import { authenticate } from "@/middleware/auth";
 
 const router = Router();
 
-// Protected route: Users must be logged in to bid
+// Protected routes: Users must be logged in
 router.post("/", authenticate, placeBid);
+router.post("/buy-now", authenticate, buyNow);
 
 export default router;

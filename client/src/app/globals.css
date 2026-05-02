@@ -93,11 +93,45 @@
   100% { background-position: 200% 0; }
 }
 
+@keyframes pop-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
 /* === Utility Animations === */
-.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-.animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
-.animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
-.animate-slide-in { animation: slide-in 0.4s ease-out forwards; }
+.animate-pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
+.animate-slide-up { animation: slide-up 0.8s ease-out forwards; }
+.animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+.animate-slide-in { animation: slide-in 0.7s ease-out forwards; }
+.animate-pop-in { animation: pop-in 0.5s ease-out forwards; }
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-bounce-subtle { animation: bounce-subtle 1.5s ease-in-out infinite; }
+
+/* === Premium Transitions & Hover Effects === */
+.hover-scale {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-glow {
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.hover-glow:hover {
+  box-shadow: 0 0 15px rgba(190, 198, 224, 0.15);
+  border-color: rgba(190, 198, 224, 0.3);
+}
 
 @keyframes slide-in {
   from { transform: translateX(100px); opacity: 0; }

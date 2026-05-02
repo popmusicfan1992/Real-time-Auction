@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import { redisClient, redisSubscriber } from "../config/redis";
 import prisma from "../config/prisma";
 import { handleAuctioneerBot } from "../services/auctioneer.service";
+import { generateChatResponse } from "../services/chatbot.service";
 import { AuctionService } from "../services/auction.service";
 
 export function initializeSocket(io: Server) {
@@ -21,6 +22,8 @@ export function initializeSocket(io: Server) {
       } else if (data.type === "OUTBID_ALERT") {
         // Send directly to the user who was outbid via their specific room/socket
         io.to(`user_${data.userId}`).emit("outbid_alert", data.payload);
+      } else if (data.type === "AUCTION_ENDED") {
+        io.to(data.auctionId).emit("auction_ended", data.payload);
       }
     }
   });
@@ -43,7 +46,7 @@ export function initializeSocket(io: Server) {
 
     // Handle Chat Messages
     socket.on("send_message", async (data: { auctionId: string, message: string, user: string }) => {
-      // Save chat to DB
+      // Save user message to DB
       await prisma.chatMessage.create({
         data: {
           auctionId: data.auctionId,
@@ -53,7 +56,7 @@ export function initializeSocket(io: Server) {
         }
       });
 
-      // Broadcast to room
+      // Broadcast user message to room
       io.to(data.auctionId).emit("new_message", {
         id: Date.now(),
         user: data.user,
@@ -61,6 +64,57 @@ export function initializeSocket(io: Server) {
         isBot: false,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
+
+      // Check if user is asking the AI bot (starts with @ai, @bot, or a question mark)
+      const msg = data.message.trim().toLowerCase();
+      const isAIQuery = msg.startsWith("@ai") || msg.startsWith("@bot") || msg.startsWith("?");
+
+      if (isAIQuery) {
+        // Strip the prefix to get the actual question
+        const userQuestion = data.message
+          .replace(/^@ai\s*/i, "")
+          .replace(/^@bot\s*/i, "")
+          .replace(/^\?\s*/, "")
+          .trim();
+
+        if (userQuestion.length > 0) {
+          // Show typing indicator
+          io.to(data.auctionId).emit("bot_typing", { isTyping: true });
+
+          try {
+            const aiResponse = await generateChatResponse(
+              userQuestion,
+              data.auctionId,
+              data.user
+            );
+
+            const botMessage = {
+              id: `ai_${Date.now()}`,
+              user: "GalleryX AI",
+              message: aiResponse,
+              isBot: true,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            // Save AI response to DB
+            await prisma.chatMessage.create({
+              data: {
+                auctionId: data.auctionId,
+                sender: "GalleryX AI",
+                message: aiResponse,
+                isBot: true
+              }
+            });
+
+            // Broadcast AI response
+            io.to(data.auctionId).emit("new_message", botMessage);
+          } catch (err) {
+            console.error("AI Chat Error:", err);
+          } finally {
+            io.to(data.auctionId).emit("bot_typing", { isTyping: false });
+          }
+        }
+      }
     });
 
     socket.on("disconnect", () => {

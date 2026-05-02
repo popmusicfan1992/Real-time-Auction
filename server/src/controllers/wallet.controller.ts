@@ -8,6 +8,10 @@ export const getMyWallet = async (req: AuthRequest, res: Response) => {
     const wallet = await WalletService.getWallet(userId);
     res.json(wallet);
   } catch (error: any) {
+    console.error("❌ Wallet Error:", error.message);
+    if (error.message.includes("User not found")) {
+      return res.status(401).json({ message: error.message });
+    }
     res.status(500).json({ message: error.message });
   }
 };
@@ -25,6 +29,22 @@ export const createDeposit = async (req: AuthRequest, res: Response) => {
     res.json(result);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const confirmDeposit = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { paymentIntentId } = req.body;
+
+    if (!paymentIntentId) {
+      return res.status(400).json({ message: "Payment intent ID is required" });
+    }
+
+    const result = await WalletService.confirmDeposit(userId, paymentIntentId);
+    res.json(result);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 };
 

@@ -127,7 +127,109 @@ export const getAuctionById = async (req: Request, res: Response) => {
   }
 };
 
+// Get chat messages for an auction
+export const getChatMessages = async (req: Request, res: Response) => {
+  try {
+    const auctionId = req.params.id;
+
+    const messages = await prisma.chatMessage.findMany({
+      where: { auctionId },
+      orderBy: { createdAt: "asc" },
+      take: 50
+    });
+
+    res.json(messages);
+  } catch (error) {
+    console.error("Error fetching chat messages:", error);
+    res.status(500).json({ message: "Failed to fetch chat messages" });
+  }
+};
+
 import cloudinary from "@/config/cloudinary";
+
+// Get homepage stats (public)
+export const getHomeStats = async (req: Request, res: Response) => {
+  try {
+    // Total bids count
+    const totalBids = await prisma.bid.count();
+
+    // Total volume (sum of all winning bids / current prices)
+    const volumeResult = await prisma.bid.aggregate({
+      _sum: { amount: true },
+    });
+    const totalVolume = volumeResult._sum.amount ? Number(volumeResult._sum.amount) : 0;
+
+    // Active bidders (unique users who placed bids on ACTIVE auctions)
+    const activeBidders = await prisma.bid.findMany({
+      where: { auction: { status: "ACTIVE" } },
+      select: { userId: true },
+      distinct: ["userId"],
+    });
+
+    // Recent bids (last 10 for live ticker)
+    const recentBids = await prisma.bid.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      include: {
+        user: { select: { name: true, avatar: true } },
+        auction: { select: { title: true } },
+      },
+    });
+
+    // Top collectors (users with most wins)
+    const endedAuctions = await prisma.auction.findMany({
+      where: { status: "ENDED" },
+      include: {
+        bids: {
+          orderBy: { amount: "desc" },
+          take: 1,
+          include: { user: { select: { id: true, name: true, avatar: true } } },
+        },
+      },
+    });
+
+    // Aggregate wins and total spent per user
+    const collectorMap = new Map<string, { name: string; avatar: string | null; totalWins: number; totalSpent: number }>();
+    for (const auction of endedAuctions) {
+      const winningBid = auction.bids[0];
+      if (winningBid) {
+        const existing = collectorMap.get(winningBid.userId);
+        if (existing) {
+          existing.totalWins++;
+          existing.totalSpent += Number(winningBid.amount);
+        } else {
+          collectorMap.set(winningBid.userId, {
+            name: winningBid.user.name,
+            avatar: winningBid.user.avatar,
+            totalWins: 1,
+            totalSpent: Number(winningBid.amount),
+          });
+        }
+      }
+    }
+
+    const topCollectors = Array.from(collectorMap.values())
+      .sort((a, b) => b.totalWins - a.totalWins || b.totalSpent - a.totalSpent)
+      .slice(0, 5);
+
+    res.json({
+      totalBids,
+      totalVolume,
+      activeBidders: activeBidders.length,
+      recentBids: recentBids.map((b) => ({
+        userName: b.user.name,
+        userAvatar: b.user.avatar,
+        amount: Number(b.amount),
+        auctionTitle: b.auction.title,
+        createdAt: b.createdAt,
+      })),
+      topCollectors,
+    });
+  } catch (error) {
+    console.error("Error fetching home stats:", error);
+    res.status(500).json({ message: "Failed to fetch home stats" });
+  }
+};
 
 // Create a new auction (Seller/Admin only)
 export const createAuction = async (req: AuthRequest, res: Response) => {

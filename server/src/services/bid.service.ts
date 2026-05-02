@@ -160,4 +160,174 @@ export class BiddingService {
       return newBid;
     });
   }
+
+  // ========================================
+  // BUY NOW — Mua ngay với giá cố định
+  // ========================================
+  static async buyNow(userId: string, auctionId: string) {
+    return await prisma.$transaction(async (tx) => {
+      // 1. Lấy auction + tất cả bids
+      const auction = await tx.auction.findUnique({
+        where: { id: auctionId },
+        include: {
+          bids: {
+            orderBy: { amount: "desc" },
+            select: { userId: true },
+            distinct: ["userId"],
+          },
+        },
+      });
+
+      if (!auction) throw new Error("Auction not found");
+      if (auction.status !== "ACTIVE") throw new Error("Auction is not active");
+      if (!auction.buyNowPrice) throw new Error("This auction does not support Buy Now");
+
+      const buyNowPrice = auction.buyNowPrice;
+
+      // 2. Kiểm tra ví người mua
+      const buyerWallet = await tx.wallet.findUnique({ where: { userId } });
+      if (!buyerWallet) throw new Error("Wallet not found");
+
+      // Tính số tiền cần trả: buyNowPrice - tiền cọc đã giữ (nếu có)
+      const existingHold = await tx.depositHold.findFirst({
+        where: { walletId: buyerWallet.id, auctionId, status: "HELD" }
+      });
+      
+      const alreadyHeld = existingHold ? existingHold.amount : new Decimal(0);
+      const remainingToPay = buyNowPrice.minus(alreadyHeld);
+
+      if (buyerWallet.balance.lessThan(remainingToPay)) {
+        throw new Error(`Insufficient funds. Need $${remainingToPay.toString()} more (Buy Now price: $${buyNowPrice.toString()}, deposit held: $${alreadyHeld.toString()})`);
+      }
+
+      // 3. Trừ tiền người mua
+      await tx.wallet.update({
+        where: { userId },
+        data: {
+          balance: { decrement: remainingToPay },
+        },
+      });
+
+      // Nếu người mua đã có cọc, chuyển sang CHARGED
+      if (existingHold) {
+        await tx.wallet.update({
+          where: { userId },
+          data: { frozenBalance: { decrement: alreadyHeld } },
+        });
+        await tx.depositHold.update({
+          where: { id: existingHold.id },
+          data: { status: "CHARGED" },
+        });
+      }
+
+      // Tạo transaction thanh toán
+      await tx.transaction.create({
+        data: {
+          walletId: buyerWallet.id,
+          amount: buyNowPrice,
+          type: "PAYMENT",
+          status: "COMPLETED",
+          description: `Buy Now: ${auction.title}`,
+        },
+      });
+
+      // 4. Hoàn trả cọc cho TẤT CẢ người đã bid khác
+      const otherHolds = await tx.depositHold.findMany({
+        where: {
+          auctionId,
+          status: "HELD",
+          walletId: { not: buyerWallet.id },
+        },
+      });
+
+      for (const hold of otherHolds) {
+        await tx.wallet.update({
+          where: { id: hold.walletId },
+          data: {
+            frozenBalance: { decrement: hold.amount },
+            balance: { increment: hold.amount },
+          },
+        });
+        await tx.depositHold.update({
+          where: { id: hold.id },
+          data: { status: "RELEASED", releasedAt: new Date() },
+        });
+      }
+
+      // 5. Tạo bid cuối cùng ở mức buyNowPrice
+      const finalBid = await tx.bid.create({
+        data: {
+          userId,
+          auctionId,
+          amount: buyNowPrice,
+        },
+        include: {
+          user: { select: { name: true, avatar: true } },
+        },
+      });
+
+      // 6. Đóng auction
+      await tx.auction.update({
+        where: { id: auctionId },
+        data: {
+          status: "ENDED",
+          currentPrice: buyNowPrice,
+          endTime: new Date(), // Kết thúc ngay
+        },
+      });
+
+      // 7. Phát sự kiện qua Socket
+      redisClient.publish("auction_events", JSON.stringify({
+        type: "NEW_BID",
+        auctionId,
+        payload: {
+          newPrice: buyNowPrice.toString(),
+          bidderName: finalBid.user.name,
+          bid: {
+            ...finalBid,
+            amount: finalBid.amount.toString(),
+          },
+        },
+      }));
+
+      redisClient.publish("auction_events", JSON.stringify({
+        type: "AUCTION_ENDED",
+        auctionId,
+        payload: {
+          winnerId: userId,
+          finalPrice: buyNowPrice.toString(),
+          isBuyNow: true,
+        },
+      }));
+
+      // 8. Notifications
+      await NotificationService.notifyAuctionWon(
+        userId,
+        auction.title,
+        buyNowPrice.toString(),
+        auctionId
+      );
+
+      // Thông báo cho tất cả người tham gia khác
+      for (const bidder of auction.bids) {
+        if (bidder.userId !== userId) {
+          await NotificationService.notifyAuctionLost(
+            bidder.userId,
+            auction.title,
+            auctionId
+          );
+        }
+      }
+
+      console.log(`🔨 BUY NOW: ${finalBid.user.name} bought "${auction.title}" for $${buyNowPrice.toString()}`);
+
+      return {
+        message: "Buy Now successful!",
+        auction: auction.title,
+        price: buyNowPrice.toString(),
+        bid: finalBid,
+      };
+    });
+  }
 }
+
