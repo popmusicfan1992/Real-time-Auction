@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { login } = useAuth();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,8 +53,8 @@ export default function LoginPage() {
 
         <div className="max-w-sm w-full mx-auto mt-16 lg:mt-0">
           <div className="mb-10">
-            <h1 className="font-headline-lg text-3xl font-bold text-on-surface mb-2">Welcome Back</h1>
-            <p className="font-body-md text-base text-on-surface-variant">Enter your details to access high-stakes bidding.</p>
+            <h1 className="font-headline-lg text-3xl font-bold text-on-surface mb-2">{t("auth.welcomeBack")}</h1>
+            <p className="font-body-md text-base text-on-surface-variant">{t("auth.loginSubtitle")}</p>
           </div>
 
           {error && (
@@ -72,20 +74,20 @@ export default function LoginPage() {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
-            <span className="font-label-bold text-sm">Continue with Google</span>
+            <span className="font-label-bold text-sm">{t("auth.continueGoogle")}</span>
           </button>
 
           {/* Divider */}
           <div className="relative flex items-center mb-6">
             <div className="flex-grow border-t border-outline-variant" />
-            <span className="flex-shrink-0 mx-4 font-body-md text-[12px] uppercase tracking-widest text-on-surface-variant font-medium">Or log in with email</span>
+            <span className="flex-shrink-0 mx-4 font-body-md text-[12px] uppercase tracking-widest text-on-surface-variant font-medium">{t("auth.orLoginEmail")}</span>
             <div className="flex-grow border-t border-outline-variant" />
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
 
             <div>
-              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="email">Email address</label>
+              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="email">{t("auth.emailAddress")}</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
                   <span className="material-symbols-outlined text-[20px]">mail</span>
@@ -104,7 +106,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="password">Password</label>
+              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="password">{t("auth.password")}</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
                   <span className="material-symbols-outlined text-[20px]">lock</span>
@@ -127,15 +129,15 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full flex justify-center items-center gap-2 py-4 px-4 rounded-xl font-label-bold text-sm text-on-secondary bg-secondary hover:bg-secondary-fixed focus:outline-none transition-all duration-300 disabled:opacity-50 shadow-[0_0_20px_rgba(238,152,0,0.15)]"
             >
-              {loading ? "Signing in..." : "Sign In Securely"}
+              {loading ? t("auth.signingIn") : t("auth.signInSecurely")}
               {!loading && <span className="material-symbols-outlined text-[18px]">arrow_forward</span>}
             </button>
           </form>
 
           <p className="mt-8 text-center font-body-md text-[14px] text-on-surface-variant">
-            Don&apos;t have an account?{" "}
+            {t("auth.noAccount")}{" "}
             <Link href="/register" className="font-label-bold text-secondary hover:text-secondary-fixed transition-colors ml-1">
-              Apply for Membership
+              {t("auth.applyMembership")}
             </Link>
           </p>
         </div>
@@ -153,16 +155,24 @@ export default function LoginPage() {
         <div className="absolute bottom-20 left-20 z-20 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md border border-outline-variant mb-6 shadow-lg">
             <div className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-            <span className="font-label-bold text-[12px] uppercase tracking-widest text-on-surface">Secure Connection</span>
+            <span className="font-label-bold text-[12px] uppercase tracking-widest text-on-surface">{t("auth.secureConnection")}</span>
           </div>
           <h2 className="font-display-auction text-5xl font-extrabold text-on-background mb-4 leading-tight">
-            The Thrill of the <span className="text-secondary italic">Final Second.</span>
+            {t("auth.loginHeroTitle")} <span className="text-secondary italic">{t("auth.loginHeroHighlight")}</span>
           </h2>
           <p className="font-body-lg text-lg text-on-surface-variant max-w-md">
-            Experience the adrenaline of live bidding. Secure your place among elite collectors.
+            {t("auth.loginHeroDesc")}
           </p>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" /></div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

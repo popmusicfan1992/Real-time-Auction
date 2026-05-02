@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const navItems = [
-  { href: "/", icon: "home", label: "Home" },
-  { href: "/auctions", icon: "explore", label: "Explore" },
-  { href: "/auctions/live", icon: "gavel", label: "Live" },
-  { href: "/dashboard/wallet", icon: "account_balance_wallet", label: "Wallet" },
-  { href: "/dashboard/profile", icon: "person", label: "Profile" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { href: "/", icon: "home", label: t("bottomNav.home") },
+    { href: "/auctions", icon: "explore", label: t("bottomNav.explore") },
+    { href: "/auctions/live", icon: "gavel", label: t("bottomNav.live") },
+    { href: "/dashboard/wallet", icon: "account_balance_wallet", label: t("bottomNav.wallet") },
+    { href: "/dashboard/profile", icon: "person", label: t("bottomNav.profile") },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 md:hidden bg-slate-950/90 backdrop-blur-lg border-t border-white/5 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-50 rounded-t-2xl">
@@ -43,3 +45,4 @@ export default function BottomNav() {
     </nav>
   );
 }
+

@@ -150,43 +150,47 @@ import cloudinary from "@/config/cloudinary";
 // Get homepage stats (public)
 export const getHomeStats = async (req: Request, res: Response) => {
   try {
-    // Total bids count
-    const totalBids = await prisma.bid.count();
+    // Run all independent queries in parallel for faster response
+    const [totalBids, volumeResult, activeBidders, recentBids, endedAuctions] = await Promise.all([
+      // Total bids count
+      prisma.bid.count(),
 
-    // Total volume (sum of all winning bids / current prices)
-    const volumeResult = await prisma.bid.aggregate({
-      _sum: { amount: true },
-    });
-    const totalVolume = volumeResult._sum.amount ? Number(volumeResult._sum.amount) : 0;
+      // Total volume (sum of all bids)
+      prisma.bid.aggregate({
+        _sum: { amount: true },
+      }),
 
-    // Active bidders (unique users who placed bids on ACTIVE auctions)
-    const activeBidders = await prisma.bid.findMany({
-      where: { auction: { status: "ACTIVE" } },
-      select: { userId: true },
-      distinct: ["userId"],
-    });
+      // Active bidders (unique users who placed bids on ACTIVE auctions)
+      prisma.bid.findMany({
+        where: { auction: { status: "ACTIVE" } },
+        select: { userId: true },
+        distinct: ["userId"],
+      }),
 
-    // Recent bids (last 10 for live ticker)
-    const recentBids = await prisma.bid.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 10,
-      include: {
-        user: { select: { name: true, avatar: true } },
-        auction: { select: { title: true } },
-      },
-    });
-
-    // Top collectors (users with most wins)
-    const endedAuctions = await prisma.auction.findMany({
-      where: { status: "ENDED" },
-      include: {
-        bids: {
-          orderBy: { amount: "desc" },
-          take: 1,
-          include: { user: { select: { id: true, name: true, avatar: true } } },
+      // Recent bids (last 10 for live ticker)
+      prisma.bid.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        include: {
+          user: { select: { name: true, avatar: true } },
+          auction: { select: { title: true } },
         },
-      },
-    });
+      }),
+
+      // Ended auctions for top collectors
+      prisma.auction.findMany({
+        where: { status: "ENDED" },
+        include: {
+          bids: {
+            orderBy: { amount: "desc" },
+            take: 1,
+            include: { user: { select: { id: true, name: true, avatar: true } } },
+          },
+        },
+      }),
+    ]);
+
+    const totalVolume = volumeResult._sum.amount ? Number(volumeResult._sum.amount) : 0;
 
     // Aggregate wins and total spent per user
     const collectorMap = new Map<string, { name: string; avatar: string | null; totalWins: number; totalSpent: number }>();

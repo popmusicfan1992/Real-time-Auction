@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Auction {
   id: string;
@@ -30,27 +31,27 @@ interface AuctionCounts {
   byStatus: { status: string; count: number }[];
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  WATCHES: "Watches",
-  ART: "Fine Art",
-  TECHNOLOGY: "Tech & Gadgets",
-  JEWELRY: "Jewelry",
-  FASHION: "Fashion",
-  COLLECTIBLES: "Collectibles",
-  VEHICLES: "Vehicles",
-  REAL_ESTATE: "Real Estate",
-  OTHER: "Other",
+const CATEGORY_KEY_MAP: Record<string, string> = {
+  WATCHES: "watches",
+  ART: "fineArt",
+  TECHNOLOGY: "techGadgets",
+  JEWELRY: "jewelry",
+  FASHION: "fashion",
+  COLLECTIBLES: "collectibles",
+  VEHICLES: "vehicles",
+  REAL_ESTATE: "realEstate",
+  OTHER: "other",
 };
 
-const STATUS_MAP: Record<string, string> = {
-  "Live Now": "ACTIVE",
-  Upcoming: "SCHEDULED",
-  Ended: "ENDED",
-};
+const STATUS_OPTIONS = [
+  { labelKey: "auctions.liveNow", value: "ACTIVE" },
+  { labelKey: "auctions.upcoming", value: "SCHEDULED" },
+  { labelKey: "auctions.ended", value: "ENDED" },
+];
 
-function formatTimeLeft(endTime: string): string {
+function formatTimeLeft(endTime: string, t: any): string {
   const diff = new Date(endTime).getTime() - Date.now();
-  if (diff <= 0) return "ENDED";
+  if (diff <= 0) return t("auctions.ended").toUpperCase();
   const hours = Math.floor(diff / 3600000);
   const minutes = Math.floor((diff % 3600000) / 60000);
   const seconds = Math.floor((diff % 60000) / 1000);
@@ -58,19 +59,20 @@ function formatTimeLeft(endTime: string): string {
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
-function formatStartsIn(startTime: string): string {
+function formatStartsIn(startTime: string, t: any): string {
   const diff = new Date(startTime).getTime() - Date.now();
-  if (diff <= 0) return "Starting...";
+  if (diff <= 0) return t("common.loading");
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff % 86400000) / 3600000);
-  if (days > 0) return `Starts in ${days}d ${hours}h`;
+  if (days > 0) return `${t("auctions.start")} ${days}d ${hours}h`;
   const minutes = Math.floor((diff % 3600000) / 60000);
-  return `Starts in ${hours}h ${minutes}m`;
+  return `${t("auctions.start")} ${hours}h ${minutes}m`;
 }
 
 export default function AuctionsPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [counts, setCounts] = useState<AuctionCounts | null>(null);
@@ -141,8 +143,7 @@ export default function AuctionsPage() {
   };
 
   // Handle status checkbox change (supports multi-select)
-  const handleStatusToggle = (statusLabel: string) => {
-    const statusEnum = STATUS_MAP[statusLabel];
+  const handleStatusToggle = (statusEnum: string) => {
     const newFilters = new Set(statusFilters);
     if (newFilters.has(statusEnum)) {
       // Don't allow deselecting all filters
@@ -191,11 +192,11 @@ export default function AuctionsPage() {
 
   // Build categories list from counts
   const categoryList = [
-    { key: "ALL", label: "All Categories", count: counts?.total ?? 0 },
-    ...Object.entries(CATEGORY_LABELS)
-      .map(([key, label]) => ({
+    { key: "ALL", label: t("auctions.allCategories"), count: counts?.total ?? 0 },
+    ...Object.entries(CATEGORY_KEY_MAP)
+      .map(([key, translationKey]) => ({
         key,
-        label,
+        label: t(`auctions.${translationKey}` as any),
         count: counts?.byCategory.find((c) => c.category === key)?.count ?? 0,
       }))
       .filter((c) => c.count > 0),
@@ -228,7 +229,7 @@ export default function AuctionsPage() {
       <aside className="w-full md:w-64 flex-shrink-0">
         <div className="sticky top-28 space-y-8">
           <div>
-            <h3 className="font-headline-md text-2xl font-semibold text-on-surface mb-6">Categories</h3>
+            <h3 className="font-headline-md text-2xl font-semibold text-on-surface mb-6">{t("auctions.categories")}</h3>
             <ul className="space-y-2">
               {categoryList.map((cat) => (
                 <li key={cat.key}>
@@ -249,21 +250,21 @@ export default function AuctionsPage() {
           </div>
 
           <div>
-            <h3 className="font-headline-md text-2xl font-semibold text-on-surface mb-6">Status</h3>
+            <h3 className="font-headline-md text-2xl font-semibold text-on-surface mb-6">{t("auctions.status")}</h3>
             <div className="space-y-3">
-              {Object.keys(STATUS_MAP).map((statusLabel) => {
-                const statusEnum = STATUS_MAP[statusLabel];
+              {STATUS_OPTIONS.map((option) => {
+                const statusEnum = option.value;
                 const statusCount = counts?.byStatus.find((s) => s.status === statusEnum)?.count ?? 0;
                 return (
-                  <label key={statusLabel} className="flex items-center gap-3 cursor-pointer group">
+                  <label key={statusEnum} className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
                       checked={statusFilters.has(statusEnum)}
-                      onChange={() => handleStatusToggle(statusLabel)}
+                      onChange={() => handleStatusToggle(statusEnum)}
                       className="h-5 w-5 rounded border-outline bg-surface-container text-tertiary focus:ring-tertiary accent-amber-500"
                     />
                     <span className="font-body-md text-base text-on-surface-variant group-hover:text-on-surface transition-colors flex-grow">
-                      {statusLabel}
+                      {t(option.labelKey as any)}
                     </span>
                     <span className="text-xs text-on-surface-variant">{statusCount}</span>
                   </label>
@@ -279,8 +280,8 @@ export default function AuctionsPage() {
         {/* Header & Tabs */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-outline-variant pb-4 animate-fade-in">
           <div>
-            <h1 className="font-display-auction text-5xl font-extrabold text-on-surface mb-2">Explore Catalog</h1>
-            <p className="font-body-lg text-lg text-on-surface-variant">Discover extraordinary items from around the globe.</p>
+            <h1 className="font-display-auction text-5xl font-extrabold text-on-surface mb-2">{t("auctions.exploreCatalog")}</h1>
+            <p className="font-body-lg text-lg text-on-surface-variant">{t("auctions.exploreSubtitle")}</p>
           </div>
           <div className="flex bg-surface-container-high rounded-lg p-1">
             <button
@@ -290,7 +291,7 @@ export default function AuctionsPage() {
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              Live Now
+              {t("auctions.liveNow")}
             </button>
             <button
               onClick={() => handleTabChange("upcoming")}
@@ -298,7 +299,7 @@ export default function AuctionsPage() {
                 activeTab === "upcoming" ? "bg-surface-variant text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"
               }`}
             >
-              Upcoming
+              {t("auctions.upcoming")}
             </button>
           </div>
         </div>
@@ -307,19 +308,19 @@ export default function AuctionsPage() {
         {counts && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up">
             <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
-              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">Total Auctions</p>
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">{t("auctions.totalAuctions")}</p>
               <p className="font-price-display text-2xl text-on-surface">{counts.total}</p>
             </div>
             <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
-              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">🔴 Active Now</p>
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">🔴 {t("auctions.activeNow")}</p>
               <p className="font-price-display text-2xl text-red-400">{counts.byStatus.find(s => s.status === "ACTIVE")?.count ?? 0}</p>
             </div>
             <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
-              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">📅 Upcoming</p>
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">📅 {t("auctions.upcoming")}</p>
               <p className="font-price-display text-2xl text-blue-400">{counts.byStatus.find(s => s.status === "SCHEDULED")?.count ?? 0}</p>
             </div>
             <div className="bg-surface-container rounded-lg p-3 border border-outline-variant/50 hover-glow">
-              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">✅ Completed</p>
+              <p className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider">✅ {t("auctions.completed")}</p>
               <p className="font-price-display text-2xl text-tertiary">{counts.byStatus.find(s => s.status === "ENDED")?.count ?? 0}</p>
             </div>
           </div>
@@ -330,7 +331,7 @@ export default function AuctionsPage() {
           <div className="flex justify-center items-center py-20">
             <div className="flex flex-col items-center gap-4">
               <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-              <p className="text-on-surface-variant font-label-bold text-sm">Loading auctions...</p>
+              <p className="text-on-surface-variant font-label-bold text-sm">{t("auctions.loadingAuctions")}</p>
             </div>
           </div>
         )}
@@ -339,15 +340,15 @@ export default function AuctionsPage() {
         {!loading && auctions.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <span className="material-symbols-outlined text-[64px] text-on-surface-variant/30">search_off</span>
-            <h3 className="font-headline-md text-2xl text-on-surface-variant">No auctions found</h3>
+            <h3 className="font-headline-md text-2xl text-on-surface-variant">{t("auctions.noAuctionsFound")}</h3>
             <p className="text-on-surface-variant/60 text-sm">
-              {activeTab === "live" ? "No live auctions right now. Check upcoming!" : "No upcoming auctions scheduled."}
+              {activeTab === "live" ? t("auctions.noLiveAuctions") : t("auctions.noUpcomingAuctions")}
             </p>
             <button
               onClick={() => handleTabChange(activeTab === "live" ? "upcoming" : "live")}
               className="mt-2 px-6 py-2 border border-amber-500 text-amber-500 rounded-lg font-label-bold text-sm hover:bg-amber-500/10 transition-colors"
             >
-              View {activeTab === "live" ? "Upcoming" : "Live"} Auctions
+              View {activeTab === "live" ? t("auctions.upcoming") : t("auctions.liveNow")}
             </button>
           </div>
         )}
@@ -361,11 +362,11 @@ export default function AuctionsPage() {
                 <div className="absolute top-4 left-4 z-10 flex gap-2">
                   <div className="bg-red-500/90 text-white px-3 py-1 rounded-full flex items-center gap-2 font-label-bold text-[12px] shadow-lg">
                     <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                    ACTIVE
+                    {t("auctions.active").toUpperCase()}
                   </div>
                   <div className="bg-surface-container-high/80 backdrop-blur border border-outline/30 text-on-surface px-3 py-1 rounded-full flex items-center gap-1 font-label-bold text-[12px]">
                     <span className="material-symbols-outlined text-[14px] text-blue-400">verified_user</span>
-                    Verified
+                    {t("auctions.verified")}
                   </div>
                 </div>
                 <Link href={`/auctions/${featured.id}`} className="w-full md:w-3/5 h-64 md:h-96 relative overflow-hidden bg-surface-container block">
@@ -376,10 +377,10 @@ export default function AuctionsPage() {
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-label-bold text-on-surface-variant uppercase tracking-wider border border-outline/30 px-2 py-0.5 rounded">
-                        {featured._count.bids} bids
+                        {featured._count.bids} {t("auctions.bids")}
                       </span>
                       <span className="text-xs font-label-bold text-tertiary uppercase tracking-wider">
-                        {CATEGORY_LABELS[featured.category] || featured.category}
+                        {t(`auctions.${CATEGORY_KEY_MAP[featured.category]}` as any) || featured.category}
                       </span>
                     </div>
                     <h2 className="font-headline-lg text-3xl font-bold text-on-surface mb-2 leading-tight">{featured.title}</h2>
@@ -388,21 +389,21 @@ export default function AuctionsPage() {
                   <div className="mt-6 space-y-4">
                     <div className="flex justify-between items-end border-b border-outline/20 pb-4">
                       <div>
-                        <p className="font-label-bold text-sm text-on-surface-variant mb-1">Current Bid</p>
+                        <p className="font-label-bold text-sm text-on-surface-variant mb-1">{t("auctions.currentBid")}</p>
                         <p className="font-price-display text-3xl text-secondary-container">
                           ${parseFloat(featured.currentPrice).toLocaleString()}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-label-bold text-sm text-on-surface-variant mb-1">Ends In</p>
-                        <p className="font-headline-md text-2xl text-red-400 font-mono">{formatTimeLeft(featured.endTime)}</p>
+                        <p className="font-label-bold text-sm text-on-surface-variant mb-1">{t("auctions.endsIn")}</p>
+                        <p className="font-headline-md text-2xl text-red-400 font-mono">{formatTimeLeft(featured.endTime, t)}</p>
                       </div>
                     </div>
                     <Link
                       href={`/auctions/${featured.id}`}
                       className="w-full bg-amber-500 text-slate-950 py-4 rounded-lg font-bold text-lg hover:bg-amber-400 transition-colors shadow-[0_0_20px_rgba(245,158,11,0.2)] flex justify-center items-center gap-2"
                     >
-                      Bid ${(parseFloat(featured.currentPrice) + parseFloat(featured.minIncrement)).toLocaleString()}
+                      {t("auctions.bidNow")} ${(parseFloat(featured.currentPrice) + parseFloat(featured.minIncrement)).toLocaleString()}
                       <span className="material-symbols-outlined text-[20px]">gavel</span>
                     </Link>
                   </div>
@@ -421,17 +422,17 @@ export default function AuctionsPage() {
                     {auction.status === "ACTIVE" ? (
                       <div className="bg-red-500/90 text-white px-2 py-1 rounded flex items-center gap-1.5 font-label-bold text-[10px] uppercase shadow">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                        Live
+                        {t("auctions.liveNow")}
                       </div>
                     ) : auction.status === "SCHEDULED" ? (
                       <div className="bg-blue-500/90 text-white px-2 py-1 rounded flex items-center gap-1.5 font-label-bold text-[10px] uppercase shadow">
                         <span className="material-symbols-outlined text-[12px]">schedule</span>
-                        Upcoming
+                        {t("auctions.upcoming")}
                       </div>
                     ) : (
                       <div className="bg-surface-variant/90 text-on-surface px-2 py-1 rounded flex items-center gap-1.5 font-label-bold text-[10px] uppercase shadow">
                         <span className="material-symbols-outlined text-[12px]">check_circle</span>
-                        Ended
+                        {t("auctions.ended")}
                       </div>
                     )}
                   </div>
@@ -447,14 +448,14 @@ export default function AuctionsPage() {
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <span className="text-[10px] font-label-bold text-on-surface-variant uppercase tracking-wider border border-outline/30 px-1.5 py-0.5 rounded">
-                        {auction._count.bids} bids
+                        {auction._count.bids} {t("auctions.bids")}
                       </span>
                       <span className="text-[10px] font-label-bold text-tertiary uppercase tracking-wider">
-                        {CATEGORY_LABELS[auction.category] || auction.category}
+                        {t(`auctions.${CATEGORY_KEY_MAP[auction.category]}` as any) || auction.category}
                       </span>
                       {auction.buyNowPrice && auction.status === "ACTIVE" && (
                         <span className="text-[10px] font-label-bold text-amber-400 uppercase tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded">
-                          ⚡ Buy Now
+                          ⚡ {t("auctions.buyNow")}
                         </span>
                       )}
                     </div>
@@ -480,7 +481,7 @@ export default function AuctionsPage() {
                     <div className="flex justify-between items-end mb-3">
                       <div>
                         <p className="font-label-bold text-xs text-on-surface-variant mb-0.5">
-                          {auction.status === "ENDED" ? "Final Price" : "Current Bid"}
+                          {auction.status === "ENDED" ? t("auctions.finalPrice") : t("auctions.currentBid")}
                         </p>
                         <p className="font-price-display text-2xl text-secondary-container">
                           ${parseFloat(auction.currentPrice).toLocaleString()}
@@ -489,13 +490,13 @@ export default function AuctionsPage() {
                       <div className="text-right">
                         {auction.status === "ACTIVE" ? (
                           <>
-                            <p className="font-label-bold text-xs text-on-surface-variant mb-0.5">Ends In</p>
-                            <p className="font-headline-md text-xl text-red-400 font-mono">{formatTimeLeft(auction.endTime)}</p>
+                            <p className="font-label-bold text-xs text-on-surface-variant mb-0.5">{t("auctions.endsIn")}</p>
+                            <p className="font-headline-md text-xl text-red-400 font-mono">{formatTimeLeft(auction.endTime, t)}</p>
                           </>
                         ) : auction.status === "SCHEDULED" ? (
                           <>
-                            <p className="font-label-bold text-xs text-on-surface-variant mb-0.5">Starts</p>
-                            <p className="font-headline-md text-sm text-blue-400">{formatStartsIn(auction.startTime)}</p>
+                            <p className="font-label-bold text-xs text-on-surface-variant mb-0.5">{t("auctions.starts")}</p>
+                            <p className="font-headline-md text-sm text-blue-400">{formatStartsIn(auction.startTime, t)}</p>
                           </>
                         ) : (
                           <span className="material-symbols-outlined text-outline text-2xl">gavel</span>
@@ -504,9 +505,9 @@ export default function AuctionsPage() {
                     </div>
                     {/* Extra info row */}
                     <div className="flex justify-between items-center mb-3 text-[11px] text-on-surface-variant border-t border-outline/10 pt-2">
-                      <span>Start: ${parseFloat(auction.startingPrice).toLocaleString()}</span>
-                      <span>Deposit: ${parseFloat(auction.depositAmount).toLocaleString()}</span>
-                      {auction.buyNowPrice && <span className="text-amber-400">Buy Now: ${parseFloat(auction.buyNowPrice).toLocaleString()}</span>}
+                      <span>{t("auctions.start")}: ${parseFloat(auction.startingPrice).toLocaleString()}</span>
+                      <span>{t("auctions.deposit")}: ${parseFloat(auction.depositAmount).toLocaleString()}</span>
+                      {auction.buyNowPrice && <span className="text-amber-400">{t("auctions.buyNow")}: ${parseFloat(auction.buyNowPrice).toLocaleString()}</span>}
                     </div>
 
                     {auction.status === "ACTIVE" ? (
@@ -518,11 +519,11 @@ export default function AuctionsPage() {
                         {quickBidLoading === auction.id ? (
                           <>
                             <div className="w-4 h-4 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-                            Placing bid...
+                            {t("auctions.placingBid")}
                           </>
                         ) : (
                           <>
-                            Quick Bid ${(parseFloat(auction.currentPrice) + parseFloat(auction.minIncrement)).toLocaleString()}
+                            {t("auctions.quickBid")} ${(parseFloat(auction.currentPrice) + parseFloat(auction.minIncrement)).toLocaleString()}
                           </>
                         )}
                       </button>
@@ -532,14 +533,14 @@ export default function AuctionsPage() {
                         className="w-full border border-blue-500/50 text-blue-400 py-3 rounded-lg font-bold hover:bg-blue-500/10 transition-colors flex justify-center items-center gap-2"
                       >
                         <span className="material-symbols-outlined text-[18px]">notifications</span>
-                        View Details
+                        {t("auctions.viewDetails")}
                       </Link>
                     ) : (
                       <Link
                         href={`/auctions/${auction.id}`}
                         className="w-full border border-outline/30 text-on-surface-variant py-3 rounded-lg font-bold hover:bg-surface-variant transition-colors flex justify-center items-center gap-2"
                       >
-                        View Results
+                        {t("auctions.viewResults")}
                       </Link>
                     )}
                   </div>

@@ -5,6 +5,7 @@ import useSWR from "swr";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import DepositModal from "@/components/wallet/DepositModal";
 import WithdrawModal from "@/components/wallet/WithdrawModal";
 import ManageCardsModal from "@/components/wallet/ManageCardsModal";
@@ -13,6 +14,7 @@ const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
 export default function WalletPage() {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const { data: wallet, error, mutate } = useSWR(user ? "/wallet" : null, fetcher, { refreshInterval: 5000 });
   const [isDepositModalOpen, setDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setWithdrawModalOpen] = useState(false);
@@ -22,10 +24,10 @@ export default function WalletPage() {
     return (
       <div className="max-w-md mx-auto text-center pt-24 px-6 space-y-4">
         <span className="material-symbols-outlined text-[48px] text-on-surface-variant/30">lock</span>
-        <h2 className="font-headline-md text-2xl font-bold text-on-surface">Sign in required</h2>
-        <p className="text-on-surface-variant">Please log in to access your wallet.</p>
+        <h2 className="font-headline-md text-2xl font-bold text-on-surface">{t("wallet.signInRequired")}</h2>
+        <p className="text-on-surface-variant">{t("wallet.signInToAccess")}</p>
         <Link href="/login" className="inline-block bg-secondary text-on-secondary px-8 py-2.5 rounded-full font-label-bold text-sm shadow-md hover:bg-secondary-fixed transition-colors">
-          Sign In
+          {t("nav.signIn")}
         </Link>
       </div>
     );
@@ -37,12 +39,12 @@ export default function WalletPage() {
       <div className="max-w-md mx-auto text-center pt-24 px-6 space-y-4">
         <span className="material-symbols-outlined text-[48px] text-error/50">warning</span>
         <h2 className="font-headline-md text-2xl font-bold text-on-surface">
-          {is401 ? "Session expired" : "Failed to load wallet"}
+          {is401 ? t("wallet.sessionExpired") : t("wallet.failedToLoad")}
         </h2>
         <p className="text-on-surface-variant">
           {is401 
-            ? "Your session has expired. Please log in again to access your wallet." 
-            : "Something went wrong loading your wallet data. Please try again."}
+            ? t("wallet.sessionExpiredDesc")
+            : t("wallet.failedToLoadDesc")}
         </p>
         {is401 ? (
           <button 
@@ -56,14 +58,14 @@ export default function WalletPage() {
             onClick={() => mutate()}
             className="inline-block bg-surface-variant text-on-surface px-8 py-2.5 rounded-full font-label-bold text-sm hover:bg-surface-container-highest transition-colors"
           >
-            Retry
+            {t("wallet.retry")}
           </button>
         )}
       </div>
     );
   }
 
-  if (!wallet) return <div className="text-center pt-24 text-on-surface-variant">Loading wallet...</div>;
+  if (!wallet) return <div className="text-center pt-24 text-on-surface-variant">{t("wallet.loadingWallet")}</div>;
 
   return (
     <div className="max-w-5xl mx-auto w-full px-6 space-y-8 pb-20">
@@ -91,8 +93,8 @@ export default function WalletPage() {
 
       {/* Header */}
       <div>
-        <h1 className="font-display-auction text-5xl font-extrabold text-on-surface mb-2">Wallet & Checkout</h1>
-        <p className="font-body-lg text-lg text-on-surface-variant">Manage your funds, deposits, and payment methods.</p>
+        <h1 className="font-display-auction text-5xl font-extrabold text-on-surface mb-2">{t("wallet.title")}</h1>
+        <p className="font-body-lg text-lg text-on-surface-variant">{t("wallet.subtitle")}</p>
       </div>
 
       {/* Balance Cards */}
@@ -102,12 +104,12 @@ export default function WalletPage() {
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-tertiary/10 rounded-full blur-2xl" />
           <div className="flex items-center gap-2 mb-4">
             <span className="material-symbols-outlined text-tertiary text-2xl">account_balance_wallet</span>
-            <span className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">Available Balance</span>
+            <span className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">{t("wallet.availableBalance")}</span>
           </div>
           <p className="font-price-display text-4xl font-bold text-on-surface">
             ${parseFloat(wallet.balance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </p>
-          <p className="font-body-md text-sm text-tertiary mt-2">Ready to bid</p>
+          <p className="font-body-md text-sm text-tertiary mt-2">{t("wallet.readyToBid")}</p>
         </div>
 
         {/* Frozen Funds */}
@@ -115,12 +117,12 @@ export default function WalletPage() {
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-secondary/10 rounded-full blur-2xl" />
           <div className="flex items-center gap-2 mb-4">
             <span className="material-symbols-outlined text-secondary text-2xl">lock</span>
-            <span className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">Frozen Funds</span>
+            <span className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">{t("wallet.frozenFunds")}</span>
           </div>
           <p className="font-price-display text-4xl font-bold text-secondary">
             ${parseFloat(wallet.frozenBalance).toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </p>
-          <p className="font-body-md text-sm text-on-surface-variant mt-2">Held as deposit</p>
+          <p className="font-body-md text-sm text-on-surface-variant mt-2">{t("wallet.heldAsDeposit")}</p>
         </div>
 
         {/* Total Won */}
@@ -128,12 +130,12 @@ export default function WalletPage() {
           <div className="absolute -right-6 -top-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
           <div className="flex items-center gap-2 mb-4">
             <span className="material-symbols-outlined text-primary text-2xl">emoji_events</span>
-            <span className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">Total Won</span>
+            <span className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">{t("wallet.totalWon")}</span>
           </div>
           <p className="font-price-display text-4xl font-bold text-on-surface">
             $0.00
           </p>
-          <p className="font-body-md text-sm text-on-surface-variant mt-2">0 auctions won</p>
+          <p className="font-body-md text-sm text-on-surface-variant mt-2">0 {t("wallet.auctionsWon")}</p>
         </div>
       </div>
 
@@ -144,32 +146,32 @@ export default function WalletPage() {
           className="bg-secondary text-on-secondary font-label-bold text-sm px-8 py-3 rounded-full shadow-[0_10px_30px_rgba(238,152,0,0.2)] hover:bg-secondary-fixed transition-colors flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
-          Add Funds
+          {t("wallet.addFunds")}
         </button>
         <button 
           onClick={() => setManageCardsOpen(true)}
           className="bg-transparent border border-outline text-on-surface font-label-bold text-sm px-8 py-3 rounded-full hover:bg-surface-variant transition-colors flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">credit_card</span>
-          Manage Cards
+          {t("wallet.manageCards")}
         </button>
         <button 
           onClick={() => setWithdrawModalOpen(true)}
           className="bg-transparent border border-outline text-on-surface font-label-bold text-sm px-8 py-3 rounded-full hover:bg-surface-variant transition-colors flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-[18px]">download</span>
-          Withdraw
+          {t("wallet.withdraw")}
         </button>
       </div>
 
       {/* Transaction History */}
       <div className="bg-surface-container rounded-xl border border-outline-variant overflow-hidden">
         <div className="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
-          <h2 className="font-headline-md text-2xl font-semibold text-on-surface">Transaction History</h2>
+          <h2 className="font-headline-md text-2xl font-semibold text-on-surface">{t("wallet.transactionHistory")}</h2>
         </div>
         <div className="divide-y divide-outline-variant">
           {wallet.transactions.length === 0 ? (
-            <div className="p-6 text-center text-on-surface-variant">No transactions yet.</div>
+            <div className="p-6 text-center text-on-surface-variant">{t("wallet.noTransactions")}</div>
           ) : (
             wallet.transactions.map((tx: any) => (
               <div key={tx.id} className="flex items-center justify-between px-6 py-4 hover:bg-surface-container-high/50 transition-colors">

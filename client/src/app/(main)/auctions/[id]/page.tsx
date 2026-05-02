@@ -6,12 +6,14 @@ import useSWR from "swr";
 import { io, Socket } from "socket.io-client";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
 export default function LiveBiddingRoom({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { user } = useAuth();
+  const { t } = useLanguage();
   
   // SWR fetches the initial auction data
   const { data: auction, error, mutate } = useSWR(`/auctions/${id}`, fetcher);
@@ -202,17 +204,17 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
       return (
         <div className="min-h-screen flex flex-col items-center justify-center space-y-6 pt-24 pb-20 px-4 text-center">
           <span className="material-symbols-outlined text-[64px] text-on-surface-variant/50">search_off</span>
-          <h1 className="text-display-sm text-on-surface font-light tracking-tight">Auction Not Found</h1>
-          <p className="text-body-lg text-on-surface-variant max-w-md">The auction you are looking for does not exist, has been removed, or is currently unavailable.</p>
+          <h1 className="text-display-sm text-on-surface font-light tracking-tight">{t("auctionDetail.auctionNotFound")}</h1>
+          <p className="text-body-lg text-on-surface-variant max-w-md">{t("auctionDetail.auctionNotFoundDesc")}</p>
           <Link href="/auctions" className="mt-8 px-8 py-3 bg-primary text-on-primary rounded-full font-label-lg hover:bg-primary/90 transition-colors shadow-glow-primary">
-            Browse Catalog
+            {t("auctionDetail.browseCatalog")}
           </Link>
         </div>
       );
     }
-    return <div className="min-h-screen flex items-center justify-center pt-24 text-error">Failed to load auction details. Please try again later.</div>;
+    return <div className="min-h-screen flex items-center justify-center pt-24 text-error">{t("auctionDetail.failedToLoad")}</div>;
   }
-  if (!auction) return <div className="min-h-screen pt-24 text-center text-on-surface">Loading live bidding room...</div>;
+  if (!auction) return <div className="min-h-screen pt-24 text-center text-on-surface">{t("auctionDetail.loadingRoom")}</div>;
 
   const minInc = parseFloat(auction.minIncrement);
   const bidOptions = [minInc, minInc * 2, minInc * 5, minInc * 10];
@@ -223,9 +225,9 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
     <div className="max-w-7xl mx-auto w-full pt-24 pb-20 px-4 md:px-6 space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-        <Link href="/auctions" className="hover:text-on-surface transition-colors">Catalog</Link>
+        <Link href="/auctions" className="hover:text-on-surface transition-colors">{t("auctionDetail.catalog")}</Link>
         <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-        <span className="text-on-surface font-semibold">Live Bidding Room</span>
+        <span className="text-on-surface font-semibold">{t("auctionDetail.liveBiddingRoom")}</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -249,7 +251,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
             </div>
             <div className="absolute bottom-3 right-3 bg-surface-container-high/80 backdrop-blur px-3 py-1 rounded-full font-label-bold text-[12px] text-on-surface-variant border border-white/10 flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px]">group</span>
-              {participantCount || "..."} watching
+              {participantCount || "..."} {t("auctionDetail.watching")}
             </div>
           </div>
 
@@ -287,7 +289,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
         <div className="lg:col-span-4 space-y-4">
           {/* Countdown & Current Bid */}
           <div className="bg-surface-container rounded-xl p-6 border border-outline-variant text-center">
-            <p className="font-label-bold text-sm text-error uppercase tracking-widest mb-2">Time Remaining</p>
+            <p className="font-label-bold text-sm text-error uppercase tracking-widest mb-2">{t("auctionDetail.timeRemaining")}</p>
             <p className="font-display-auction text-5xl font-extrabold text-on-surface font-mono tracking-tighter mb-4">
               {remainingMs > 0 
                 ? new Date(remainingMs).toISOString().slice(11, 19) 
@@ -298,11 +300,11 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
             </div>
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-label-bold text-xs text-on-surface-variant uppercase tracking-wider">Current Bid</p>
+                <p className="font-label-bold text-xs text-on-surface-variant uppercase tracking-wider">{t("auctionDetail.currentBid")}</p>
                 <p className="font-price-display text-3xl text-secondary mt-1">${currentBid.toLocaleString()}</p>
               </div>
               <div className="text-right">
-                <p className="font-label-bold text-xs text-on-surface-variant uppercase tracking-wider">Starting Price</p>
+                <p className="font-label-bold text-xs text-on-surface-variant uppercase tracking-wider">{t("auctionDetail.startingPrice")}</p>
                 <p className="font-body-md text-lg text-on-surface-variant mt-1">${parseFloat(auction.startingPrice).toLocaleString()}</p>
               </div>
             </div>
@@ -310,7 +312,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
 
           {/* Bid Increment Selector */}
           <div className="bg-surface-container rounded-xl p-5 border border-outline-variant">
-            <p className="font-label-bold text-sm text-on-surface-variant mb-3 uppercase tracking-wider">Bid Increment</p>
+            <p className="font-label-bold text-sm text-on-surface-variant mb-3 uppercase tracking-wider">{t("auctionDetail.bidIncrement")}</p>
             <div className="grid grid-cols-4 gap-2 mb-4">
               {bidOptions.map((inc) => (
                 <button
@@ -340,16 +342,16 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
               ) : (
                 <>
                   <span className="material-symbols-outlined text-[24px]">gavel</span>
-                  Place Bid — ${nextBidAmount.toLocaleString()}
+                  {t("auctionDetail.placeBid")} — ${nextBidAmount.toLocaleString()}
                 </>
               )}
             </button>
 
             <div className="flex justify-between items-center mt-3">
-              <p className="font-body-md text-xs text-on-surface-variant">Min increment: ${minInc.toLocaleString()}</p>
+              <p className="font-body-md text-xs text-on-surface-variant">{t("auctionDetail.minIncrement")}: ${minInc.toLocaleString()}</p>
               <p className="font-body-md text-xs text-on-surface-variant flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px] text-tertiary">verified</span>
-                Deposit required: ${depositRequired.toLocaleString()}
+                {t("auctionDetail.depositRequired")}: ${depositRequired.toLocaleString()}
               </p>
             </div>
           </div>
@@ -361,7 +363,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
               className="w-full bg-transparent border-2 border-tertiary text-tertiary py-3 rounded-lg font-bold hover:bg-tertiary/10 transition-colors flex justify-center items-center gap-2"
             >
               <span className="material-symbols-outlined text-[20px]">bolt</span>
-              Buy Now — ${parseFloat(auction.buyNowPrice).toLocaleString()}
+              {t("auctionDetail.buyNow")} — ${parseFloat(auction.buyNowPrice).toLocaleString()}
             </button>
           )}
 
@@ -369,14 +371,14 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
           {isAuctionEnded && (
             <div className="bg-surface-container rounded-xl p-5 border border-error/30 text-center space-y-2">
               <span className="material-symbols-outlined text-[40px] text-error">gavel</span>
-              <h3 className="font-headline-md text-xl font-bold text-on-surface">Auction Ended</h3>
+              <h3 className="font-headline-md text-xl font-bold text-on-surface">{t("auctionDetail.auctionEnded")}</h3>
               {auctionEndedData?.isBuyNow ? (
                 <p className="text-on-surface-variant text-sm">This item was purchased via <span className="text-tertiary font-bold">Buy Now</span> for ${parseFloat(auctionEndedData.finalPrice).toLocaleString()}</p>
               ) : (
                 <p className="text-on-surface-variant text-sm">Final price: <span className="text-secondary font-bold">${currentBid.toLocaleString()}</span></p>
               )}
               {auctionEndedData?.winnerId === user?.id && (
-                <p className="text-green-400 font-bold flex items-center justify-center gap-1"><span className="material-symbols-outlined text-[18px]">emoji_events</span> You won this auction!</p>
+                <p className="text-green-400 font-bold flex items-center justify-center gap-1"><span className="material-symbols-outlined text-[18px]">emoji_events</span> {t("auctionDetail.youWon")}</p>
               )}
             </div>
           )}
@@ -388,14 +390,14 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
           <div className="bg-surface-container rounded-xl border border-outline-variant overflow-hidden">
             <div className="px-4 py-3 border-b border-outline-variant flex items-center gap-2">
               <span className="material-symbols-outlined text-secondary text-xl">leaderboard</span>
-              <h3 className="font-label-bold text-sm text-on-surface uppercase tracking-wider">Top Bidders</h3>
+              <h3 className="font-label-bold text-sm text-on-surface uppercase tracking-wider">{t("auctionDetail.topBidders")}</h3>
               <span className="ml-auto text-[10px] font-label-bold text-on-surface-variant bg-surface-variant px-2 py-0.5 rounded-full">
                 {bidsHistory.length} bids
               </span>
             </div>
             <div className="divide-y divide-outline-variant">
               {bidsHistory.length === 0 ? (
-                <div className="p-4 text-center text-on-surface-variant text-sm">No bids yet</div>
+                <div className="p-4 text-center text-on-surface-variant text-sm">{t("auctionDetail.noBidsYet")}</div>
               ) : (
                 bidsHistory.map((bid: any, index: number) => {
                   const isYou = user && bid.userId === user.id;
@@ -433,21 +435,21 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
             <div className="px-4 py-3 border-b border-outline-variant flex items-center gap-2">
               <span className="material-symbols-outlined text-tertiary text-xl">smart_toy</span>
               <div>
-                <h3 className="font-label-bold text-sm text-on-surface uppercase tracking-wider">GalleryX AI Chat</h3>
-                <p className="text-[10px] text-on-surface-variant -mt-0.5">Type <span className="text-tertiary font-bold">@ai</span> to ask</p>
+                <h3 className="font-label-bold text-sm text-on-surface uppercase tracking-wider">{t("auctionDetail.aiChat")}</h3>
+                <p className="text-[10px] text-on-surface-variant -mt-0.5">{t("auctionDetail.typeAiToAsk")}</p>
               </div>
               <span className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse" title="Connected" />
             </div>
             <div className="flex-grow overflow-y-auto p-3 space-y-2">
               {isChatLoading ? (
                 <div className="flex items-center justify-center h-full text-on-surface-variant text-sm">
-                  Loading chat...
+                  {t("auctionDetail.loadingChat")}
                 </div>
               ) : chatMessages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-on-surface-variant text-sm gap-2 text-center px-4">
                   <span className="material-symbols-outlined text-[32px] text-tertiary/50">smart_toy</span>
-                  <p>Welcome! Ask me anything about this auction.</p>
-                  <p className="text-[11px] text-outline">Type <span className="text-tertiary">@ai</span> followed by your question</p>
+                  <p>{t("auctionDetail.welcomeChat")}</p>
+                  <p className="text-[11px] text-outline">{t("auctionDetail.typeAiHint")}</p>
                 </div>
               ) : (
                 chatMessages.map((msg: any) => (
@@ -488,7 +490,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={handleChatKeyDown}
                     className="flex-grow bg-surface-container-highest border border-outline-variant rounded-lg px-3 py-2 text-sm text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary"
-                    placeholder="@ai ask anything... or just chat"
+                    placeholder={t("auctionDetail.chatPlaceholder")}
                     maxLength={500}
                   />
                   <button 
@@ -505,7 +507,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
                   className="block text-center text-sm text-on-surface-variant hover:text-secondary transition-colors py-2"
                 >
                   <span className="material-symbols-outlined text-[14px] align-middle mr-1">login</span>
-                  Sign in to chat
+                  {t("auctionDetail.signInToChat")}
                 </Link>
               )}
             </div>
@@ -522,8 +524,8 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
               <div className="w-16 h-16 mx-auto rounded-full bg-tertiary/10 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[32px] text-tertiary">bolt</span>
               </div>
-              <h2 className="font-headline-md text-2xl font-bold text-on-surface">Confirm Buy Now</h2>
-              <p className="text-on-surface-variant text-sm">You are about to purchase this item instantly.</p>
+              <h2 className="font-headline-md text-2xl font-bold text-on-surface">{t("auctionDetail.confirmBuyNow")}</h2>
+              <p className="text-on-surface-variant text-sm">{t("auctionDetail.confirmBuyNowDesc")}</p>
             </div>
 
             {/* Item Details */}
@@ -541,11 +543,11 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
               </div>
               <div className="border-t border-outline-variant/50 pt-3 space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-on-surface-variant">Buy Now Price</span>
+                  <span className="text-sm text-on-surface-variant">{t("auctionDetail.buyNowPrice")}</span>
                   <span className="font-price-display text-lg font-bold text-tertiary">${parseFloat(auction.buyNowPrice).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-on-surface-variant">Current Bid</span>
+                  <span className="text-sm text-on-surface-variant">{t("auctionDetail.currentBid")}</span>
                   <span className="text-sm text-on-surface-variant line-through">${currentBid.toLocaleString()}</span>
                 </div>
               </div>
@@ -554,9 +556,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
             {/* Warning */}
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 flex gap-2">
               <span className="material-symbols-outlined text-amber-500 text-[18px] shrink-0 mt-0.5">info</span>
-              <p className="text-xs text-amber-200/80">
-                This action is <strong>immediate and irreversible</strong>. The full amount will be deducted from your wallet and the auction will end instantly.
-              </p>
+              <p className="text-xs text-amber-200/80">{t("auctionDetail.buyNowWarning")}</p>
             </div>
 
             {/* Actions */}
@@ -566,7 +566,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
                 disabled={isBuyingNow}
                 className="flex-1 py-3 rounded-lg font-label-bold text-sm text-on-surface-variant bg-surface-variant hover:bg-surface-container-highest transition-colors disabled:opacity-50"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleBuyNow}
@@ -576,12 +576,12 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
                 {isBuyingNow ? (
                   <>
                     <div className="w-4 h-4 border-2 border-on-tertiary/30 border-t-on-tertiary rounded-full animate-spin" />
-                    Processing...
+                    {t("auctionDetail.processing")}
                   </>
                 ) : (
                   <>
                     <span className="material-symbols-outlined text-[18px]">bolt</span>
-                    Confirm — ${parseFloat(auction.buyNowPrice).toLocaleString()}
+                    {t("auctionDetail.confirm")} — ${parseFloat(auction.buyNowPrice).toLocaleString()}
                   </>
                 )}
               </button>

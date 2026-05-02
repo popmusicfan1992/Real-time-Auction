@@ -3,18 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import NotificationDropdown from "./NotificationDropdown";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { t, locale, setLocale } = useLanguage();
 
   const navLinks = [
-    { href: "/", label: "Explore" },
-    { href: "/auctions", label: "Live Auctions" },
-    { href: "#how-it-works", label: "How it Works" },
-    { href: "/dashboard/wallet", label: "Wallet" },
+    { href: "/", label: t("nav.explore") },
+    { href: "/auctions", label: t("nav.liveAuctions") },
+    { href: "#how-it-works", label: t("nav.howItWorks") },
+    { href: "/dashboard/wallet", label: t("nav.wallet") },
   ];
+
+  const toggleLocale = () => {
+    setLocale(locale === "en" ? "vi" : "en");
+  };
 
   return (
     <header className="fixed top-0 z-50 w-full bg-slate-950/80 backdrop-blur-xl border-b border-white/10 shadow-2xl hidden md:block">
@@ -54,6 +60,22 @@ export default function Navbar() {
 
         {/* Trailing Actions */}
         <div className="flex items-center gap-4">
+          {/* Language Toggle */}
+          <button
+            onClick={toggleLocale}
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition-all hover:bg-white/10 duration-300 px-3 py-1.5 rounded-full border border-white/5 hover:border-white/20 bg-white/5"
+            title={t("lang.switchTo")}
+          >
+            <div className="w-5 h-3.5 relative overflow-hidden rounded-sm shadow-[0_0_10px_rgba(0,0,0,0.3)] border border-white/20">
+              <img 
+                src={locale === "en" ? "https://flagcdn.com/w40/gb.png" : "https://flagcdn.com/w40/vn.png"} 
+                alt={locale === "en" ? "UK Flag" : "VN Flag"}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <span className="font-display-auction text-[11px] font-bold uppercase tracking-widest">{t("lang.current")}</span>
+          </button>
+
           {/* Notification Bell */}
           <NotificationDropdown />
 
@@ -73,7 +95,7 @@ export default function Navbar() {
                 href="/auctions"
                 className="bg-amber-500 text-slate-950 font-display-auction font-bold text-sm px-6 py-2 rounded-full hover:bg-amber-400 transition-colors active:scale-95 shadow-lg"
               >
-                Place Bid
+                {t("nav.placeBid")}
               </Link>
               <div className="relative group">
                 <Link href="/dashboard/profile">
@@ -91,19 +113,19 @@ export default function Navbar() {
                   <div className="p-2 space-y-1">
                     <Link href="/dashboard" className="w-full text-left px-3 py-2 text-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors font-label-bold flex items-center gap-2 block">
                       <span className="material-symbols-outlined text-[16px]">dashboard</span>
-                      Dashboard
+                      {t("nav.dashboard")}
                     </Link>
                     <Link href="/dashboard/wallet" className="w-full text-left px-3 py-2 text-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors font-label-bold flex items-center gap-2 block">
                       <span className="material-symbols-outlined text-[16px]">account_balance_wallet</span>
-                      Wallet
+                      {t("nav.wallet")}
                     </Link>
                     <Link href="/dashboard/notifications" className="w-full text-left px-3 py-2 text-sm text-on-surface-variant hover:bg-surface-variant rounded-lg transition-colors font-label-bold flex items-center gap-2 block">
                       <span className="material-symbols-outlined text-[16px]">notifications</span>
-                      Notifications
+                      {t("nav.notifications")}
                     </Link>
                     <button onClick={logout} className="w-full text-left px-3 py-2 text-sm text-error hover:bg-error/10 rounded-lg transition-colors font-label-bold flex items-center gap-2">
                       <span className="material-symbols-outlined text-[16px]">logout</span>
-                      Sign Out
+                      {t("nav.signOut")}
                     </button>
                   </div>
                 </div>
@@ -115,13 +137,13 @@ export default function Navbar() {
                 href="/login"
                 className="text-amber-500 hover:text-amber-400 font-display-auction font-bold text-sm transition-colors"
               >
-                Sign In
+                {t("nav.signIn")}
               </Link>
               <Link
                 href="/register"
                 className="bg-amber-500 text-slate-950 font-display-auction font-bold text-sm px-6 py-2 rounded-full hover:bg-amber-400 transition-colors shadow-lg"
               >
-                Register
+                {t("nav.register")}
               </Link>
             </div>
           )}
@@ -130,3 +152,4 @@ export default function Navbar() {
     </header>
   );
 }
+

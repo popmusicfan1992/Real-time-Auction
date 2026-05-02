@@ -3,6 +3,13 @@ import prisma from "@/config/prisma";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
+// Model fallback chain: try each in order if quota is exhausted
+const MODEL_CHAIN = [
+  "gemini-2.0-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+];
+
 let ai: GoogleGenAI | null = null;
 
 function getAI(): GoogleGenAI {
@@ -13,6 +20,34 @@ function getAI(): GoogleGenAI {
     ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   }
   return ai;
+}
+
+/**
+ * Try generating content with model fallback chain
+ */
+async function generateWithFallback(prompt: string): Promise<string> {
+  const genAI = getAI();
+  let lastError: any = null;
+
+  for (const model of MODEL_CHAIN) {
+    try {
+      const response = await genAI.models.generateContent({
+        model,
+        contents: prompt,
+      });
+      const text = response.text?.trim();
+      if (text) return text;
+    } catch (error: any) {
+      lastError = error;
+      const isQuotaError =
+        error?.message?.includes("429") ||
+        error?.message?.includes("RESOURCE_EXHAUSTED") ||
+        error?.message?.includes("quota");
+      console.warn(`[Chatbot] Model ${model} failed: ${isQuotaError ? "QUOTA_EXHAUSTED" : error.message}`);
+      if (!isQuotaError) throw error; // Only fallback on quota errors
+    }
+  }
+  throw lastError || new Error("All models exhausted");
 }
 
 // System prompt that defines the bot's personality and capabilities
@@ -101,13 +136,7 @@ User "${userName}" says: "${userMessage}"
 
 Respond helpfully and concisely:`;
 
-    const genAI = getAI();
-    const response = await genAI.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: fullPrompt,
-    });
-
-    const text = response.text?.trim();
+    const text = await generateWithFallback(fullPrompt);
     if (!text) return "I'm having trouble processing that. Could you try again?";
 
     return text;
@@ -133,8 +162,6 @@ export async function generateBidAnnouncement(
   bidderName: string
 ): Promise<string> {
   try {
-    const genAI = getAI();
-
     const prompt = `You are an enthusiastic auction announcer for Gallery X, a premium auction house. 
 A new bid just came in. Generate a SHORT, exciting one-line announcement in English.
 Use 1 emoji at the start. Keep it under 15 words.
@@ -148,13 +175,7 @@ Example formats:
 
 Generate ONE announcement:`;
 
-    const response = await genAI.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: prompt,
-    });
-
-    const text = response.text?.trim();
-    if (!text) throw new Error("Empty response");
+    const text = await generateWithFallback(prompt);
 
     // Remove any quotes the model might add
     return text.replace(/^["']|["']$/g, "");

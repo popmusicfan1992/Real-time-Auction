@@ -4,11 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 export default function RegisterPage() {
   const { login } = useAuth();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,8 +51,8 @@ export default function RegisterPage() {
   return (
     <div className="bg-background text-on-background min-h-screen flex">
       {/* Left Panel */}
-      <div className="w-full lg:w-5/12 xl:w-1/3 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-20 relative z-10 bg-surface-container-low border-r border-outline-variant shadow-2xl">
-        <div className="absolute top-8 left-8 sm:left-12 lg:left-20">
+      <div className="w-full lg:w-5/12 xl:w-1/3 flex flex-col px-8 sm:px-12 md:px-16 lg:px-20 relative z-10 bg-surface-container-low border-r border-outline-variant shadow-2xl overflow-y-auto py-12">
+        <div className="mb-12">
           <Link href="/" className="font-display-auction text-[20px] font-black italic tracking-tighter text-secondary uppercase hover:text-secondary-fixed transition-colors">
             GALLERY X
           </Link>
@@ -58,8 +60,8 @@ export default function RegisterPage() {
 
         <div className="max-w-sm w-full mx-auto mt-16 lg:mt-0">
           <div className="mb-8">
-            <h1 className="font-headline-lg text-3xl font-bold text-on-surface mb-2">Apply for Membership</h1>
-            <p className="font-body-md text-base text-on-surface-variant">Join the world's most exclusive auction platform.</p>
+            <h1 className="font-headline-lg text-3xl font-bold text-on-surface mb-2">{t("auth.applyForMembership")}</h1>
+            <p className="font-body-md text-base text-on-surface-variant">{t("auth.registerSubtitle")}</p>
           </div>
 
           {error && (
@@ -79,20 +81,20 @@ export default function RegisterPage() {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
-            <span className="font-label-bold text-sm">Sign up with Google</span>
+            <span className="font-label-bold text-sm">{t("auth.signUpGoogle")}</span>
           </button>
 
           {/* Divider */}
           <div className="relative flex items-center mb-6">
             <div className="flex-grow border-t border-outline-variant" />
-            <span className="flex-shrink-0 mx-4 font-body-md text-[12px] uppercase tracking-widest text-on-surface-variant font-medium">Or sign up with email</span>
+            <span className="flex-shrink-0 mx-4 font-body-md text-[12px] uppercase tracking-widest text-on-surface-variant font-medium">{t("auth.orSignUpEmail")}</span>
             <div className="flex-grow border-t border-outline-variant" />
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
 
             <div>
-              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="name">Full Name</label>
+              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="name">{t("auth.fullName")}</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
                   <span className="material-symbols-outlined text-[20px]">person</span>
@@ -103,14 +105,14 @@ export default function RegisterPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
-                  placeholder="Your full name"
+                  className="appearance-none block w-full pl-12 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
+                  placeholder={t("auth.fullNamePlaceholder")}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="reg-email">Email address</label>
+              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="reg-email">{t("auth.emailAddress")}</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
                   <span className="material-symbols-outlined text-[20px]">mail</span>
@@ -121,14 +123,14 @@ export default function RegisterPage() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
-                  placeholder="collector@galleryx.com"
+                  className="appearance-none block w-full pl-12 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
+                  placeholder={t("auth.emailPlaceholder")}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="reg-password">Password</label>
+              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="reg-password">{t("auth.password")}</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
                   <span className="material-symbols-outlined text-[20px]">lock</span>
@@ -139,17 +141,17 @@ export default function RegisterPage() {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
-                  placeholder="Min. 6 characters"
+                  className="appearance-none block w-full pl-12 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
+                  placeholder={t("auth.passwordPlaceholder")}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="confirm-password">Confirm Password</label>
+              <label className="block font-label-bold text-sm text-on-surface mb-2" htmlFor="confirm-password">{t("auth.confirmPassword")}</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
-                  <span className="material-symbols-outlined text-[20px]">lock_check</span>
+                  <span className="material-symbols-outlined text-[20px]">verified_user</span>
                 </span>
                 <input
                   id="confirm-password"
@@ -157,8 +159,8 @@ export default function RegisterPage() {
                   required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="appearance-none block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
-                  placeholder="Repeat password"
+                  className="appearance-none block w-full pl-12 pr-3 py-3 border border-outline-variant rounded-xl bg-surface-container-highest text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-tertiary focus:border-tertiary transition-colors font-body-md text-base"
+                  placeholder={t("auth.confirmPasswordPlaceholder")}
                 />
               </div>
             </div>
@@ -168,15 +170,15 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full flex justify-center items-center gap-2 py-4 px-4 rounded-xl font-label-bold text-sm text-on-primary bg-primary hover:bg-primary/90 focus:outline-none transition-all duration-300 disabled:opacity-50 shadow-[0_0_20px_rgba(43,212,206,0.2)] mt-2"
             >
-              {loading ? "Creating account..." : "Create My Account"}
+              {loading ? t("auth.creating") : t("auth.createAccount")}
               {!loading && <span className="material-symbols-outlined text-[18px]">how_to_reg</span>}
             </button>
           </form>
 
           <p className="mt-8 text-center font-body-md text-[14px] text-on-surface-variant">
-            Already have an account?{" "}
+            {t("auth.alreadyAccount")}{" "}
             <Link href="/login" className="font-label-bold text-secondary hover:text-secondary-fixed transition-colors ml-1">
-              Sign In
+              {t("auth.signIn")}
             </Link>
           </p>
         </div>
@@ -194,13 +196,13 @@ export default function RegisterPage() {
         <div className="absolute bottom-20 left-20 z-20 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md border border-outline-variant mb-6 shadow-lg">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="font-label-bold text-[12px] uppercase tracking-widest text-on-surface">Members Only Platform</span>
+            <span className="font-label-bold text-[12px] uppercase tracking-widest text-on-surface">{t("auth.membersOnly")}</span>
           </div>
           <h2 className="font-display-auction text-5xl font-extrabold text-on-background mb-4 leading-tight">
-            Join the <span className="text-primary italic">Elite Circle.</span>
+            {t("auth.registerHeroTitle")} <span className="text-primary italic">{t("auth.registerHeroHighlight")}</span>
           </h2>
           <p className="font-body-lg text-lg text-on-surface-variant max-w-md">
-            Access exclusive auctions curated for serious collectors. Your journey into high-value bidding starts here.
+            {t("auth.registerHeroDesc")}
           </p>
         </div>
       </div>

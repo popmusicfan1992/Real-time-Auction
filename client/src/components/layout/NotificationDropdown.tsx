@@ -55,7 +55,7 @@ export default function NotificationDropdown() {
     };
 
     fetchCount();
-    const interval = setInterval(fetchCount, 10000); // Poll every 10 seconds
+    const interval = setInterval(fetchCount, 30000); // Poll every 30 seconds (was 10s)
     return () => clearInterval(interval);
   }, [user]);
 
