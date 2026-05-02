@@ -7,6 +7,7 @@ const express_1 = require("express");
 const express_2 = __importDefault(require("express"));
 const stripe_1 = require("@/config/stripe");
 const prisma_1 = __importDefault(require("@/config/prisma"));
+const notification_service_1 = require("@/services/notification.service");
 const router = (0, express_1.Router)();
 // Endpoint webhook phải nhận raw body để Stripe xác minh chữ ký (signature)
 router.post("/stripe", express_2.default.raw({ type: "application/json" }), async (req, res) => {
@@ -41,6 +42,8 @@ router.post("/stripe", express_2.default.raw({ type: "application/json" }), asyn
                             data: { balance: { increment: transaction.amount } }
                         });
                         console.log(`✅ Điểm danh thanh toán thành công: Cộng $${transaction.amount} cho User ${userId}`);
+                        // Gửi notification
+                        await notification_service_1.NotificationService.notifyPaymentSuccess(userId, parseFloat(transaction.amount.toString()));
                     }
                 });
             }

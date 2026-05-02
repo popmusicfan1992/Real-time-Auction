@@ -7,13 +7,14 @@ import { io, Socket } from "socket.io-client";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getLocalizedDescription } from "@/lib/description-parser";
 
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
 export default function LiveBiddingRoom({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   
   // SWR fetches the initial auction data
   const { data: auction, error, mutate } = useSWR(`/auctions/${id}`, fetcher);
@@ -39,6 +40,13 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
   const [isBotTyping, setIsBotTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
+  // Watchlist state
+  const [isWatched, setIsWatched] = useState(false);
+  const [watchlistLoading, setWatchlistLoading] = useState(false);
+
+  // Toast state
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
   // Scroll chat to bottom when new messages arrive
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,6 +61,43 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
       if (auction.status === "ENDED") setIsAuctionEnded(true);
     }
   }, [auction]);
+
+  // Check if auction is in user's watchlist
+  useEffect(() => {
+    if (user && id) {
+      api.get("/users/me/watchlist")
+        .then((res) => {
+          const ids = res.data.map((w: any) => w.auction.id);
+          setIsWatched(ids.includes(id));
+        })
+        .catch(() => {});
+    }
+  }, [user, id]);
+
+  // Toast auto-dismiss
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  const handleToggleWatchlist = async () => {
+    if (!user) {
+      setToast({ message: "Please login to use Watchlist", type: "error" });
+      return;
+    }
+    setWatchlistLoading(true);
+    try {
+      const res = await api.post("/users/me/watchlist", { auctionId: id });
+      setIsWatched(res.data.isWatched);
+      setToast({ message: res.data.message, type: "success" });
+    } catch (e: any) {
+      setToast({ message: e.response?.data?.message || "Failed", type: "error" });
+    } finally {
+      setWatchlistLoading(false);
+    }
+  };
 
   // Load existing chat messages from DB
   useEffect(() => {
@@ -223,6 +268,15 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="max-w-7xl mx-auto w-full pt-24 pb-20 px-4 md:px-6 space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className={`fixed top-24 right-6 z-50 px-5 py-3 rounded-xl shadow-2xl border backdrop-blur-xl flex items-center gap-3 animate-slide-in ${
+          toast.type === "success" ? "bg-green-500/20 border-green-500/30 text-green-400" : "bg-red-500/20 border-red-500/30 text-red-400"
+        }`}>
+          <span className="material-symbols-outlined text-[20px]">{toast.type === "success" ? "check_circle" : "error"}</span>
+          <span className="font-label-bold text-sm">{toast.message}</span>
+        </div>
+      )}
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-on-surface-variant">
         <Link href="/auctions" className="hover:text-on-surface transition-colors">{t("auctionDetail.catalog")}</Link>
@@ -264,23 +318,21 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
                 <span className="text-xs font-label-bold text-tertiary uppercase tracking-wider">{auction.category}</span>
               </div>
               <button 
-                onClick={async () => {
-                  try {
-                    const res = await api.post("/users/me/watchlist", { auctionId: id });
-                    alert(res.data.message);
-                  } catch (e: any) {
-                    alert("Please login to use Watchlist");
-                  }
-                }}
-                className="w-10 h-10 rounded-full flex items-center justify-center bg-surface-variant hover:bg-surface-container-high transition-colors text-on-surface hover:text-error"
-                title="Add to Watchlist"
+                onClick={handleToggleWatchlist}
+                disabled={watchlistLoading}
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
+                  isWatched
+                    ? "bg-red-500/20 border border-red-500/50 text-red-400 animate-heart-pop"
+                    : "bg-surface-variant hover:bg-surface-container-high text-on-surface hover:text-red-400 border border-transparent hover:border-red-500/30"
+                } disabled:opacity-50`}
+                title={isWatched ? "Remove from Watchlist" : "Add to Watchlist"}
               >
-                <span className="material-symbols-outlined text-[20px]">favorite</span>
+                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: isWatched ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
               </button>
             </div>
             <h1 className="font-headline-lg text-2xl font-bold text-on-surface mb-2 pr-12">{auction.title}</h1>
             <p className="font-body-md text-sm text-on-surface-variant">
-              {auction.description}
+              {getLocalizedDescription(auction.description, locale)}
             </p>
           </div>
         </div>

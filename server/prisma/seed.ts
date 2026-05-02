@@ -79,7 +79,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: '1974 Rolex Submariner Ref. 5513',
-      description: 'An exceptionally preserved example of the classic no-date Submariner, featuring a stunning "Maxi" dial with beautiful cream patina. Full box and papers included.',
+      description: 'An exceptionally preserved example of the classic no-date Submariner, featuring a stunning "Maxi" dial with beautiful cream patina. Full box and papers included.||VI||Một mẫu Submariner không ngày kinh điển được bảo quản đặc biệt, với mặt số "Maxi" tuyệt đẹp cùng lớp patina kem tự nhiên. Đầy đủ hộp và giấy tờ.',
       images: ['https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=2080&auto=format&fit=crop'],
       category: "WATCHES",
       startingPrice: 15000,
@@ -97,7 +97,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: '"Midnight Convergence" - Elena Rostova, 2021',
-      description: 'A breathtaking contemporary oil painting exploring the intersection of light and shadow. Oil on canvas, 150x200cm. Exhibited at Venice Biennale 2022.',
+      description: 'A breathtaking contemporary oil painting exploring the intersection of light and shadow. Oil on canvas, 150x200cm. Exhibited at Venice Biennale 2022.||VI||Bức tranh sơn dầu đương đại tuyệt đẹp khám phá giao điểm giữa ánh sáng và bóng tối. Sơn dầu trên vải, 150x200cm. Trưng bày tại Venice Biennale 2022.',
       images: ['https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1920&auto=format&fit=crop'],
       category: "ART",
       startingPrice: 35000,
@@ -114,7 +114,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'Leica M3 Double Stroke (1955)',
-      description: 'A rare first-batch Leica M3 Double Stroke rangefinder camera in excellent working condition. Serial number confirms 1955 production. Includes original leather case.',
+      description: 'A rare first-batch Leica M3 Double Stroke rangefinder camera in excellent working condition. Serial number confirms 1955 production. Includes original leather case.||VI||Máy ảnh rangefinder Leica M3 Double Stroke hiếm, đợt sản xuất đầu tiên, trong tình trạng hoạt động tuyệt vời. Số serial xác nhận sản xuất năm 1955. Bao gồm hộp da nguyên bản.',
       images: ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?q=80&w=2070&auto=format&fit=crop'],
       category: "TECHNOLOGY",
       startingPrice: 2500,
@@ -131,7 +131,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'Cartier Panthère Diamond Bracelet',
-      description: 'Exquisite 18K white gold bracelet set with 12.5 carats of VVS diamonds. Cartier Paris hallmark, circa 1985. Comes with original Cartier box and certificate.',
+      description: 'Exquisite 18K white gold bracelet set with 12.5 carats of VVS diamonds. Cartier Paris hallmark, circa 1985. Comes with original Cartier box and certificate.||VI||Vòng tay vàng trắng 18K tinh xảo đính 12,5 carat kim cương VVS. Dấu Cartier Paris, khoảng năm 1985. Đi kèm hộp và giấy chứng nhận Cartier nguyên bản.',
       images: ['https://images.unsplash.com/photo-1515562141589-67f0d569b6cc?q=80&w=2070&auto=format&fit=crop'],
       category: "JEWELRY",
       startingPrice: 85000,
@@ -152,7 +152,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'Porsche 911 Carrera RS 2.7 (1973)',
-      description: 'One of the most iconic sports cars ever made. Matching numbers, fully restored to exact original specifications in Grand Prix White with Viper Green accents.',
+      description: 'One of the most iconic sports cars ever made. Matching numbers, fully restored to exact original specifications in Grand Prix White with Viper Green accents.||VI||Một trong những chiếc xe thể thao mang tính biểu tượng nhất từng được sản xuất. Số khớp, phục chế hoàn toàn theo thông số kỹ thuật gốc với màu Grand Prix White và điểm nhấn Viper Green.',
       images: ['https://images.unsplash.com/photo-1503376713356-20092305848d?q=80&w=1920&auto=format&fit=crop'],
       category: "VEHICLES",
       startingPrice: 850000,
@@ -169,7 +169,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'First Edition "The Great Gatsby" (1925)',
-      description: 'First edition, first printing of F. Scott Fitzgerald\'s masterpiece. Original dust jacket in remarkable condition. One of the most sought-after American first editions.',
+      description: 'First edition, first printing of F. Scott Fitzgerald\'s masterpiece. Original dust jacket in remarkable condition. One of the most sought-after American first editions.||VI||Ấn bản đầu tiên, in lần đầu của kiệt tác F. Scott Fitzgerald. Bìa bụi nguyên bản trong tình trạng đáng kinh ngạc. Một trong những ấn bản đầu Mỹ được săn tìm nhiều nhất.',
       images: ['https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1974&auto=format&fit=crop'],
       category: "COLLECTIBLES",
       startingPrice: 120000,
@@ -186,7 +186,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'Audemars Piguet Royal Oak "Jumbo"',
-      description: 'Reference 15202ST, the closest modern interpretation of the original 1972 Genta design. Ultra-thin automatic movement, blue tapisserie dial. Complete set.',
+      description: 'Reference 15202ST, the closest modern interpretation of the original 1972 Genta design. Ultra-thin automatic movement, blue tapisserie dial. Complete set.||VI||Tham chiếu 15202ST, phiên bản hiện đại gần nhất với thiết kế Genta nguyên bản 1972. Bộ máy tự động siêu mỏng, mặt số tapisserie xanh. Bộ đầy đủ.',
       images: ['https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?q=80&w=2070&auto=format&fit=crop'],
       category: "WATCHES",
       startingPrice: 65000,
@@ -203,7 +203,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'Hermès Birkin 25 Himalaya',
-      description: 'The holy grail of handbags. Matte Niloticus Crocodile with palladium hardware and 10.23ct diamond-encrusted lock. One of fewer than 50 known to exist.',
+      description: 'The holy grail of handbags. Matte Niloticus Crocodile with palladium hardware and 10.23ct diamond-encrusted lock. One of fewer than 50 known to exist.||VI||Thánh bôi của giới túi xách. Da cá sấu Niloticus mờ với phụ kiện palladium và khóa đính 10,23 carat kim cương. Một trong ít hơn 50 chiếc được biết đến.',
       images: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1935&auto=format&fit=crop'],
       category: "FASHION",
       startingPrice: 280000,
@@ -224,7 +224,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'Vintage Bordeaux Grand Cru Collection',
-      description: 'A curated collection of 12 bottles spanning 1961-1990 vintages from Château Lafite Rothschild, Mouton Rothschild, and Margaux. Provenance verified, stored in temperature-controlled cellar.',
+      description: 'A curated collection of 12 bottles spanning 1961-1990 vintages from Château Lafite Rothschild, Mouton Rothschild, and Margaux. Provenance verified, stored in temperature-controlled cellar.||VI||Bộ sưu tập tuyển chọn 12 chai rượu vang từ niên vụ 1961-1990 của Château Lafite Rothschild, Mouton Rothschild và Margaux. Nguồn gốc đã xác minh, bảo quản trong hầm kiểm soát nhiệt độ.',
       images: ['https://images.unsplash.com/photo-1474722883778-792e7990302f?q=80&w=2091&auto=format&fit=crop'],
       category: "COLLECTIBLES",
       startingPrice: 12000,
@@ -241,7 +241,7 @@ async function main() {
   await prisma.auction.create({
     data: {
       title: 'Apple Macintosh 128K (1984)',
-      description: 'Original Macintosh 128K in working condition. Includes original keyboard, mouse, and carrying case. Serial number confirms early production run.',
+      description: 'Original Macintosh 128K in working condition. Includes original keyboard, mouse, and carrying case. Serial number confirms early production run.||VI||Macintosh 128K nguyên bản trong tình trạng hoạt động. Bao gồm bàn phím, chuột và hộp đựng nguyên bản. Số serial xác nhận đợt sản xuất đầu tiên.',
       images: ['https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop'],
       category: "TECHNOLOGY",
       startingPrice: 5000,

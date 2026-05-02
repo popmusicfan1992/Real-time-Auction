@@ -9,4 +9,7 @@ router.use(auth_1.authenticate);
 router.get("/me/dashboard", user_controller_1.getDashboardStats);
 router.get("/me/watchlist", user_controller_1.getWatchlist);
 router.post("/me/watchlist", user_controller_1.toggleWatchlist);
+router.get("/me/profile", user_controller_1.getMyProfile);
+router.put("/me/profile", user_controller_1.updateMyProfile);
+router.get("/me/auctions", user_controller_1.getMyAuctions);
 exports.default = router;

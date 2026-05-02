@@ -11,19 +11,11 @@ export default function Footer() {
   };
 
   const marketplaceLinks = [
-    t("footer.liveAuctions"),
-    t("footer.upcomingLots"),
-    t("footer.curatedCollections"),
-    t("footer.pastResults"),
-    t("footer.howItWorks"),
-  ];
-
-  const resourceLinks = [
-    t("footer.theJournal"),
-    t("footer.helpCenter"),
-    t("footer.walletGuide"),
-    t("footer.shippingLogistics"),
-    t("footer.securityAuth"),
+    { label: t("footer.liveAuctions"), href: "/live-auctions" },
+    { label: t("footer.upcomingLots"), href: "/upcoming-lots" },
+    { label: t("footer.curatedCollections"), href: "/curated-collections" },
+    { label: t("footer.pastResults"), href: "/past-results" },
+    { label: t("footer.howItWorks"), href: "/how-it-works" },
   ];
 
   return (
@@ -64,9 +56,9 @@ export default function Footer() {
             <h4 className="font-label-bold text-xs text-on-surface uppercase tracking-widest mb-6">{t("footer.marketplace")}</h4>
             <ul className="flex flex-col gap-4">
               {marketplaceLinks.map((item) => (
-                <li key={item}>
-                  <Link href="/auctions" className="font-body-md text-sm text-on-surface-variant hover:text-secondary transition-colors duration-200">
-                    {item}
+                <li key={item.href}>
+                  <Link href={item.href} className="font-body-md text-sm text-on-surface-variant hover:text-secondary transition-colors duration-200">
+                    {item.label}
                   </Link>
                 </li>
               ))}

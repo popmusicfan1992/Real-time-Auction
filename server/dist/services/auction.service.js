@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuctionService = void 0;
 const prisma_1 = __importDefault(require("@/config/prisma"));
 const redis_1 = require("@/config/redis");
+const notification_service_1 = require("@/services/notification.service");
 class AuctionService {
     static async closeAuction(auctionId) {
         try {
@@ -77,6 +78,21 @@ class AuctionService {
                         finalPrice: auction.currentPrice.toString()
                     }
                 }));
+                // 4. Tạo notifications cho người thắng và người thua
+                if (winnerId) {
+                    await notification_service_1.NotificationService.notifyAuctionWon(winnerId, auction.title, auction.currentPrice.toString(), auctionId);
+                }
+                // Thông báo cho tất cả người tham gia (trừ người thắng)
+                const allBidders = await tx.bid.findMany({
+                    where: { auctionId },
+                    select: { userId: true },
+                    distinct: ["userId"],
+                });
+                for (const bidder of allBidders) {
+                    if (bidder.userId !== winnerId) {
+                        await notification_service_1.NotificationService.notifyAuctionLost(bidder.userId, auction.title, auctionId);
+                    }
+                }
             });
         }
         catch (error) {

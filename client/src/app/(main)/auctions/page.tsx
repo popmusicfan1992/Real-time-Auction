@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getLocalizedDescription } from "@/lib/description-parser";
 
 interface Auction {
   id: string;
@@ -72,7 +73,7 @@ function formatStartsIn(startTime: string, t: any): string {
 export default function AuctionsPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [counts, setCounts] = useState<AuctionCounts | null>(null);
@@ -83,12 +84,26 @@ export default function AuctionsPage() {
   const [quickBidLoading, setQuickBidLoading] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [, setTick] = useState(0); // for countdown re-renders
+  const [watchlistSet, setWatchlistSet] = useState<Set<string>>(new Set());
+  const [watchlistLoading, setWatchlistLoading] = useState<string | null>(null);
 
   // Countdown ticker - updates every second
   useEffect(() => {
     const interval = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch watchlist
+  useEffect(() => {
+    if (user) {
+      api.get("/users/me/watchlist")
+        .then((res) => {
+          const ids = res.data.map((w: any) => w.auction.id);
+          setWatchlistSet(new Set(ids));
+        })
+        .catch(() => {});
+    }
+  }, [user]);
 
   // Fetch counts
   useEffect(() => {
@@ -187,6 +202,32 @@ export default function AuctionsPage() {
       setToast({ message: msg, type: "error" });
     } finally {
       setQuickBidLoading(null);
+    }
+  };
+
+  // Toggle watchlist
+  const handleToggleWatchlist = async (auctionId: string) => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    setWatchlistLoading(auctionId);
+    try {
+      const res = await api.post("/users/me/watchlist", { auctionId });
+      setWatchlistSet((prev) => {
+        const next = new Set(prev);
+        if (res.data.isWatched) {
+          next.add(auctionId);
+        } else {
+          next.delete(auctionId);
+        }
+        return next;
+      });
+      setToast({ message: res.data.message, type: "success" });
+    } catch (err: any) {
+      setToast({ message: err.response?.data?.message || "Failed", type: "error" });
+    } finally {
+      setWatchlistLoading(null);
     }
   };
 
@@ -384,7 +425,7 @@ export default function AuctionsPage() {
                       </span>
                     </div>
                     <h2 className="font-headline-lg text-3xl font-bold text-on-surface mb-2 leading-tight">{featured.title}</h2>
-                    <p className="font-body-md text-base text-on-surface-variant line-clamp-2">{featured.description}</p>
+                    <p className="font-body-md text-base text-on-surface-variant line-clamp-2">{getLocalizedDescription(featured.description, locale)}</p>
                   </div>
                   <div className="mt-6 space-y-4">
                     <div className="flex justify-between items-end border-b border-outline/20 pb-4">
@@ -417,7 +458,8 @@ export default function AuctionsPage() {
                 key={auction.id}
                 className="bg-surface-container-high/40 backdrop-blur-sm border border-outline/10 rounded-xl overflow-hidden group flex flex-col hover:border-outline/30 transition-all hover-scale hover-glow animate-fade-in"
               >
-                <Link href={`/auctions/${auction.id}`} className="relative h-64 overflow-hidden bg-surface-container block">
+                <div className="relative h-64 overflow-hidden bg-surface-container">
+                  <Link href={`/auctions/${auction.id}`} className="block w-full h-full">
                   <div className="absolute top-3 left-3 z-10 flex gap-2">
                     {auction.status === "ACTIVE" ? (
                       <div className="bg-red-500/90 text-white px-2 py-1 rounded flex items-center gap-1.5 font-label-bold text-[10px] uppercase shadow">
@@ -443,7 +485,21 @@ export default function AuctionsPage() {
                     }`}
                     src={auction.images[0] || "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=2080"}
                   />
-                </Link>
+                  </Link>
+                  <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleWatchlist(auction.id); }}
+                    disabled={watchlistLoading === auction.id}
+                    className={`absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-200 ${
+                      watchlistSet.has(auction.id)
+                        ? "bg-red-500/30 border-red-500/50 text-red-400 animate-heart-pop"
+                        : "bg-black/40 border-white/10 text-white/70 hover:text-red-400 hover:border-red-500/30"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: watchlistSet.has(auction.id) ? "'FILL' 1" : "'FILL' 0" }}>
+                      favorite
+                    </span>
+                  </button>
+                </div>
                 <div className="p-5 flex-grow flex flex-col justify-between">
                   <div className="mb-4">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -464,7 +520,7 @@ export default function AuctionsPage() {
                         {auction.title}
                       </h3>
                     </Link>
-                    <p className="font-body-md text-sm text-on-surface-variant line-clamp-2 mt-1.5">{auction.description}</p>
+                    <p className="font-body-md text-sm text-on-surface-variant line-clamp-2 mt-1.5">{getLocalizedDescription(auction.description, locale)}</p>
                     {/* Seller info */}
                     <div className="flex items-center gap-2 mt-3">
                       <div className="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-outline/20">

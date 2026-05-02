@@ -14,7 +14,7 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: t("nav.explore") },
     { href: "/auctions", label: t("nav.liveAuctions") },
-    { href: "#how-it-works", label: t("nav.howItWorks") },
+    { href: "/how-it-works", label: t("nav.howItWorks") },
     { href: "/dashboard/wallet", label: t("nav.wallet") },
   ];
 

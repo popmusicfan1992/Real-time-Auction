@@ -6,4 +6,6 @@ const auth_1 = require("@/middleware/auth");
 const router = (0, express_1.Router)();
 router.get("/", auth_1.authenticate, wallet_controller_1.getMyWallet);
 router.post("/deposit", auth_1.authenticate, wallet_controller_1.createDeposit);
+router.post("/deposit/confirm", auth_1.authenticate, wallet_controller_1.confirmDeposit);
+router.post("/withdraw", auth_1.authenticate, wallet_controller_1.createWithdraw);
 exports.default = router;

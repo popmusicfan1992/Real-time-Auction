@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toggleWatchlist = exports.getWatchlist = exports.getDashboardStats = void 0;
+exports.getMyAuctions = exports.updateMyProfile = exports.getMyProfile = exports.toggleWatchlist = exports.getWatchlist = exports.getDashboardStats = void 0;
 const prisma_1 = __importDefault(require("@/config/prisma"));
 // Lấy thông tin thống kê tổng quan
 const getDashboardStats = async (req, res) => {
@@ -108,3 +108,53 @@ const toggleWatchlist = async (req, res) => {
     }
 };
 exports.toggleWatchlist = toggleWatchlist;
+// Lấy thông tin Profile
+const getMyProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await prisma_1.default.user.findUnique({
+            where: { id: userId },
+            select: { id: true, name: true, email: true, avatar: true, phone: true, address: true, role: true, createdAt: true }
+        });
+        if (!user)
+            return res.status(404).json({ message: "User not found" });
+        res.json(user);
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+exports.getMyProfile = getMyProfile;
+// Cập nhật Profile
+const updateMyProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { name, phone, address } = req.body;
+        const updatedUser = await prisma_1.default.user.update({
+            where: { id: userId },
+            data: { name, phone, address },
+            select: { id: true, name: true, email: true, avatar: true, phone: true, address: true, role: true }
+        });
+        res.json(updatedUser);
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+exports.updateMyProfile = updateMyProfile;
+// Lấy danh sách Auction của Seller
+const getMyAuctions = async (req, res) => {
+    try {
+        const sellerId = req.user.id;
+        const auctions = await prisma_1.default.auction.findMany({
+            where: { sellerId },
+            orderBy: { createdAt: "desc" },
+            include: { _count: { select: { bids: true } } }
+        });
+        res.json(auctions);
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+exports.getMyAuctions = getMyAuctions;

@@ -7,6 +7,7 @@ exports.initializeSocket = initializeSocket;
 const redis_1 = require("../config/redis");
 const prisma_1 = __importDefault(require("../config/prisma"));
 const auctioneer_service_1 = require("../services/auctioneer.service");
+const chatbot_service_1 = require("../services/chatbot.service");
 const auction_service_1 = require("../services/auction.service");
 function initializeSocket(io) {
     // 1. Setup Redis Subscriber for Pub/Sub across instances
@@ -23,6 +24,9 @@ function initializeSocket(io) {
             else if (data.type === "OUTBID_ALERT") {
                 // Send directly to the user who was outbid via their specific room/socket
                 io.to(`user_${data.userId}`).emit("outbid_alert", data.payload);
+            }
+            else if (data.type === "AUCTION_ENDED") {
+                io.to(data.auctionId).emit("auction_ended", data.payload);
             }
         }
     });
@@ -41,7 +45,7 @@ function initializeSocket(io) {
         });
         // Handle Chat Messages
         socket.on("send_message", async (data) => {
-            // Save chat to DB
+            // Save user message to DB
             await prisma_1.default.chatMessage.create({
                 data: {
                     auctionId: data.auctionId,
@@ -50,7 +54,7 @@ function initializeSocket(io) {
                     isBot: false
                 }
             });
-            // Broadcast to room
+            // Broadcast user message to room
             io.to(data.auctionId).emit("new_message", {
                 id: Date.now(),
                 user: data.user,
@@ -58,6 +62,48 @@ function initializeSocket(io) {
                 isBot: false,
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             });
+            // Check if user is asking the AI bot (starts with @ai, @bot, or a question mark)
+            const msg = data.message.trim().toLowerCase();
+            const isAIQuery = msg.startsWith("@ai") || msg.startsWith("@bot") || msg.startsWith("?");
+            if (isAIQuery) {
+                // Strip the prefix to get the actual question
+                const userQuestion = data.message
+                    .replace(/^@ai\s*/i, "")
+                    .replace(/^@bot\s*/i, "")
+                    .replace(/^\?\s*/, "")
+                    .trim();
+                if (userQuestion.length > 0) {
+                    // Show typing indicator
+                    io.to(data.auctionId).emit("bot_typing", { isTyping: true });
+                    try {
+                        const aiResponse = await (0, chatbot_service_1.generateChatResponse)(userQuestion, data.auctionId, data.user);
+                        const botMessage = {
+                            id: `ai_${Date.now()}`,
+                            user: "GalleryX AI",
+                            message: aiResponse,
+                            isBot: true,
+                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        };
+                        // Save AI response to DB
+                        await prisma_1.default.chatMessage.create({
+                            data: {
+                                auctionId: data.auctionId,
+                                sender: "GalleryX AI",
+                                message: aiResponse,
+                                isBot: true
+                            }
+                        });
+                        // Broadcast AI response
+                        io.to(data.auctionId).emit("new_message", botMessage);
+                    }
+                    catch (err) {
+                        console.error("AI Chat Error:", err);
+                    }
+                    finally {
+                        io.to(data.auctionId).emit("bot_typing", { isTyping: false });
+                    }
+                }
+            }
         });
         socket.on("disconnect", () => {
             console.log(`🔌 Client disconnected: ${socket.id}`);
@@ -67,14 +113,31 @@ function initializeSocket(io) {
     // Tự động bắn thời gian đồng bộ cho các phiên đang diễn ra mỗi giây
     setInterval(async () => {
         try {
-            // Chỉ lấy các auction đang diễn ra
+            const now = new Date();
+            // 1. Tự động chuyển các phiên SCHEDULED sang ACTIVE nếu đã đến startTime
+            const scheduledAuctions = await prisma_1.default.auction.findMany({
+                where: {
+                    status: "SCHEDULED",
+                    startTime: { lte: now }
+                },
+                select: { id: true }
+            });
+            if (scheduledAuctions.length > 0) {
+                await prisma_1.default.auction.updateMany({
+                    where: { id: { in: scheduledAuctions.map(a => a.id) } },
+                    data: { status: "ACTIVE" }
+                });
+                console.log(`[Auction] Tự động chuyển ${scheduledAuctions.length} phiên sang ACTIVE`);
+                // Có thể gửi socket event cho client refresh lại trang
+            }
+            // 2. Xử lý Countdown & Auto-Close cho các phiên ACTIVE
             const activeAuctions = await prisma_1.default.auction.findMany({
                 where: { status: "ACTIVE" },
                 select: { id: true, endTime: true }
             });
-            const now = Date.now();
+            const nowMs = now.getTime();
             for (const auction of activeAuctions) {
-                const remainingMs = auction.endTime.getTime() - now;
+                const remainingMs = auction.endTime.getTime() - nowMs;
                 // Nếu hết thời gian, tự động đóng phiên và nhả cọc
                 if (remainingMs <= 0) {
                     await auction_service_1.AuctionService.closeAuction(auction.id);
@@ -82,7 +145,7 @@ function initializeSocket(io) {
                 else {
                     io.to(auction.id).emit("countdown_sync", {
                         auctionId: auction.id,
-                        serverTime: now,
+                        serverTime: nowMs,
                         remainingMs: remainingMs
                     });
                 }
