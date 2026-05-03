@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 interface ManageCardsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -7,15 +9,43 @@ interface ManageCardsModalProps {
 }
 
 export default function ManageCardsModal({ isOpen, onClose, onAddFunds }: ManageCardsModalProps) {
+  const { locale } = useLanguage();
   if (!isOpen) return null;
+
+  const vi = locale === "vi";
+
+  const steps = [
+    {
+      icon: "add_card",
+      title: vi ? "Nạp Tiền" : "Deposit",
+      desc: vi ? "Nhập số tiền và thanh toán an toàn bằng thẻ tín dụng/ghi nợ" : "Enter an amount and pay securely with any credit/debit card",
+    },
+    {
+      icon: "account_balance_wallet",
+      title: vi ? "Số Dư Ví" : "Wallet Balance",
+      desc: vi ? "Tiền được nạp vào ví Gallery X ngay lập tức" : "Funds are added to your Gallery X wallet instantly",
+    },
+    {
+      icon: "gavel",
+      title: vi ? "Đặt Giá" : "Bidding",
+      desc: vi ? "Dùng số dư ví để đặt giá trong phiên đấu giá trực tiếp" : "Use your wallet balance to place bids on live auctions",
+    },
+    {
+      icon: "download",
+      title: vi ? "Rút Tiền" : "Withdraw",
+      desc: vi ? "Yêu cầu rút tiền bất cứ lúc nào về tài khoản ngân hàng" : "Request a withdrawal anytime to your bank account",
+    },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-surface-container-high rounded-2xl p-6 w-full max-w-md shadow-2xl border border-outline-variant space-y-5">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="font-headline-md text-2xl font-bold text-on-surface">Payment Methods</h2>
+          <h2 className="font-headline-md text-2xl font-bold text-on-surface">
+            {vi ? "Phương Thức Thanh Toán" : "Payment Methods"}
+          </h2>
           <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-surface-variant flex items-center justify-center transition-colors">
             <span className="material-symbols-outlined text-on-surface-variant">close</span>
           </button>
@@ -30,27 +60,30 @@ export default function ManageCardsModal({ isOpen, onClose, onAddFunds }: Manage
               </svg>
             </div>
             <div>
-              <p className="font-label-bold text-sm text-on-surface">Stripe Secure Payments</p>
-              <p className="text-xs text-on-surface-variant">Your card info is handled securely by Stripe</p>
+              <p className="font-label-bold text-sm text-on-surface">
+                {vi ? "Thanh Toán Bảo Mật Stripe" : "Stripe Secure Payments"}
+              </p>
+              <p className="text-xs text-on-surface-variant">
+                {vi ? "Thông tin thẻ được xử lý an toàn bởi Stripe" : "Your card info is handled securely by Stripe"}
+              </p>
             </div>
           </div>
           <div className="text-xs text-on-surface-variant bg-surface-container-highest rounded-lg px-3 py-2">
             <span className="material-symbols-outlined text-[14px] align-middle mr-1 text-tertiary">lock</span>
-            Gallery X <strong>never stores</strong> your card details. All payments are processed through Stripe&apos;s PCI-compliant infrastructure.
+            {vi
+              ? <>Gallery X <strong>không bao giờ lưu</strong> thông tin thẻ của bạn. Mọi giao dịch đều qua hạ tầng PCI của Stripe.</>
+              : <>Gallery X <strong>never stores</strong> your card details. All payments are processed through Stripe&apos;s PCI-compliant infrastructure.</>
+            }
           </div>
         </div>
 
         {/* How It Works */}
         <div className="space-y-3">
-          <h3 className="font-label-bold text-xs uppercase tracking-wider text-on-surface-variant">How Payments Work</h3>
-          
+          <h3 className="font-label-bold text-xs uppercase tracking-wider text-on-surface-variant">
+            {vi ? "Cách Thức Hoạt Động" : "How Payments Work"}
+          </h3>
           <div className="space-y-2">
-            {[
-              { icon: "add_card", title: "Deposit", desc: "Enter an amount and pay securely with any credit/debit card" },
-              { icon: "account_balance_wallet", title: "Wallet Balance", desc: "Funds are added to your Gallery X wallet instantly" },
-              { icon: "gavel", title: "Bidding", desc: "Use your wallet balance to place bids on live auctions" },
-              { icon: "download", title: "Withdraw", desc: "Request a withdrawal anytime to your bank account" },
-            ].map((item) => (
+            {steps.map((item) => (
               <div key={item.icon} className="flex items-start gap-3 p-3 rounded-lg hover:bg-surface-container transition-colors">
                 <div className="w-8 h-8 bg-tertiary/10 rounded-lg flex-shrink-0 flex items-center justify-center">
                   <span className="material-symbols-outlined text-tertiary text-[18px]">{item.icon}</span>
@@ -66,18 +99,14 @@ export default function ManageCardsModal({ isOpen, onClose, onAddFunds }: Manage
 
         {/* Actions */}
         <div className="flex gap-3 pt-2">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-3 rounded-full font-label-bold text-sm border border-outline text-on-surface hover:bg-surface-variant transition-colors"
-          >
-            Close
+          <button onClick={onClose}
+            className="flex-1 px-4 py-3 rounded-full font-label-bold text-sm border border-outline text-on-surface hover:bg-surface-variant transition-colors">
+            {vi ? "Đóng" : "Close"}
           </button>
-          <button
-            onClick={() => { onClose(); onAddFunds(); }}
-            className="flex-1 bg-secondary text-on-secondary px-4 py-3 rounded-full font-label-bold text-sm shadow-[0_4px_15px_rgba(238,152,0,0.3)] hover:bg-secondary-fixed transition-colors flex items-center justify-center gap-2"
-          >
+          <button onClick={() => { onClose(); onAddFunds(); }}
+            className="flex-1 bg-secondary text-on-secondary px-4 py-3 rounded-full font-label-bold text-sm shadow-[0_4px_15px_rgba(238,152,0,0.3)] hover:bg-secondary-fixed transition-colors flex items-center justify-center gap-2">
             <span className="material-symbols-outlined text-[18px]">add</span>
-            Add Funds Now
+            {vi ? "Nạp Tiền Ngay" : "Add Funds Now"}
           </button>
         </div>
       </div>

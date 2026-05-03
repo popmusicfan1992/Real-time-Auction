@@ -4,20 +4,24 @@ import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import api from "@/lib/api";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
 
 function CheckoutForm({
   paymentIntentId,
+  amount,
   onSuccess,
   onCancel,
 }: {
   paymentIntentId: string;
+  amount: number;
   onSuccess: (newBalance: number) => void;
   onCancel: () => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
+  const { locale } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -38,24 +42,20 @@ function CheckoutForm({
       });
 
       if (error) {
-        setErrorMessage(error.message || "An unexpected error occurred.");
+        setErrorMessage(error.message || (locale === "vi" ? "Đã xảy ra lỗi không mong muốn." : "An unexpected error occurred."));
         setIsLoading(false);
         return;
       }
 
-      // Payment succeeded on Stripe! Now confirm with our backend to update balance
       try {
-        const confirmRes = await api.post("/wallet/deposit/confirm", {
-          paymentIntentId,
-        });
+        const confirmRes = await api.post("/wallet/deposit/confirm", { paymentIntentId });
         onSuccess(parseFloat(confirmRes.data.newBalance || "0"));
       } catch (confirmErr: any) {
-        // Even if confirm fails, payment was successful - webhook will handle it
         console.warn("Backend confirm failed, webhook will handle:", confirmErr);
         onSuccess(0);
       }
     } catch (err: any) {
-      setErrorMessage(err.message || "Payment failed. Please try again.");
+      setErrorMessage(err.message || (locale === "vi" ? "Thanh toán thất bại. Vui lòng thử lại." : "Payment failed. Please try again."));
     }
 
     setIsLoading(false);
@@ -63,11 +63,7 @@ function CheckoutForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement
-        options={{
-          layout: "tabs",
-        }}
-      />
+      <PaymentElement options={{ layout: "tabs" }} />
       {errorMessage && (
         <div className="bg-error/10 border border-error/30 rounded-lg px-4 py-2.5 flex items-center gap-2">
           <span className="material-symbols-outlined text-error text-[18px]">error</span>
@@ -81,7 +77,7 @@ function CheckoutForm({
           className="px-5 py-2 font-label-bold text-sm text-on-surface-variant hover:text-on-surface transition-colors"
           disabled={isLoading}
         >
-          Cancel
+          {locale === "vi" ? "Hủy" : "Cancel"}
         </button>
         <button
           type="submit"
@@ -91,12 +87,12 @@ function CheckoutForm({
           {isLoading ? (
             <>
               <div className="w-4 h-4 border-2 border-on-tertiary/30 border-t-on-tertiary rounded-full animate-spin" />
-              Processing...
+              {locale === "vi" ? "Đang xử lý..." : "Processing..."}
             </>
           ) : (
             <>
               <span className="material-symbols-outlined text-[18px]">lock</span>
-              Pay Now
+              {locale === "vi" ? "Thanh Toán Ngay" : "Pay Now"}
             </>
           )}
         </button>
@@ -116,6 +112,7 @@ export default function DepositModal({
   onClose: () => void;
   onDepositSuccess?: () => void;
 }) {
+  const { locale } = useLanguage();
   const [amount, setAmount] = useState(1000);
   const [clientSecret, setClientSecret] = useState("");
   const [paymentIntentId, setPaymentIntentId] = useState("");
@@ -136,7 +133,7 @@ export default function DepositModal({
 
   const handleInitialize = async () => {
     if (amount < 1) {
-      setInitError("Minimum deposit is $1");
+      setInitError(locale === "vi" ? "Số tiền nạp tối thiểu là $1" : "Minimum deposit is $1");
       return;
     }
     setIsInitializing(true);
@@ -146,7 +143,7 @@ export default function DepositModal({
       setClientSecret(res.data.clientSecret);
       setPaymentIntentId(res.data.paymentIntentId);
     } catch (err: any) {
-      const msg = err.response?.data?.message || err.message || "Failed to initialize payment";
+      const msg = err.response?.data?.message || err.message || (locale === "vi" ? "Không thể khởi tạo thanh toán" : "Failed to initialize payment");
       setInitError(msg);
     } finally {
       setIsInitializing(false);
@@ -160,7 +157,9 @@ export default function DepositModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-headline-md text-2xl font-bold text-on-surface">Deposit Funds</h2>
+          <h2 className="font-headline-md text-2xl font-bold text-on-surface">
+            {locale === "vi" ? "Nạp Tiền Vào Ví" : "Deposit Funds"}
+          </h2>
           <button
             onClick={handleClose}
             className="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-variant transition-colors"
@@ -175,19 +174,23 @@ export default function DepositModal({
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
               <span className="material-symbols-outlined text-green-400 text-[36px]">check_circle</span>
             </div>
-            <h3 className="font-headline-md text-xl font-bold text-on-surface">Payment Successful!</h3>
+            <h3 className="font-headline-md text-xl font-bold text-on-surface">
+              {locale === "vi" ? "Thanh Toán Thành Công!" : "Payment Successful!"}
+            </h3>
             <p className="font-body-md text-sm text-on-surface-variant">{successMsg}</p>
             <button
               onClick={handleClose}
               className="bg-secondary text-on-secondary px-8 py-2.5 rounded-full font-label-bold text-sm shadow-md hover:bg-secondary-fixed transition-colors"
             >
-              Done
+              {locale === "vi" ? "Xong" : "Done"}
             </button>
           </div>
         ) : !clientSecret ? (
           <div className="space-y-5">
             <p className="font-body-md text-sm text-on-surface-variant">
-              Enter the amount you wish to add to your wallet.
+              {locale === "vi"
+                ? "Nhập số tiền bạn muốn nạp vào ví."
+                : "Enter the amount you wish to add to your wallet."}
             </p>
 
             {/* Preset amount buttons */}
@@ -210,7 +213,7 @@ export default function DepositModal({
             {/* Custom amount input */}
             <div>
               <label className="block font-label-bold text-xs uppercase tracking-wider text-on-surface-variant mb-1">
-                Custom Amount (USD)
+                {locale === "vi" ? "Số Tiền Tùy Chỉnh (USD)" : "Custom Amount (USD)"}
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-3 text-on-surface-variant material-symbols-outlined text-[20px]">
@@ -241,7 +244,7 @@ export default function DepositModal({
                 onClick={handleClose}
                 className="px-5 py-2 font-label-bold text-sm text-on-surface-variant hover:text-on-surface transition-colors"
               >
-                Cancel
+                {locale === "vi" ? "Hủy" : "Cancel"}
               </button>
               <button
                 onClick={handleInitialize}
@@ -251,10 +254,10 @@ export default function DepositModal({
                 {isInitializing ? (
                   <>
                     <div className="w-4 h-4 border-2 border-on-secondary/30 border-t-on-secondary rounded-full animate-spin" />
-                    Initializing...
+                    {locale === "vi" ? "Đang khởi tạo..." : "Initializing..."}
                   </>
                 ) : (
-                  <>Continue to Payment</>
+                  locale === "vi" ? "Tiếp Tục Thanh Toán" : "Continue to Payment"
                 )}
               </button>
             </div>
@@ -264,7 +267,8 @@ export default function DepositModal({
             <div className="flex items-center gap-2 mb-4 bg-surface-container rounded-lg px-4 py-2.5">
               <span className="material-symbols-outlined text-secondary text-[20px]">paid</span>
               <span className="font-label-bold text-sm text-on-surface">
-                Depositing: <span className="text-secondary">${amount.toLocaleString()}</span>
+                {locale === "vi" ? "Nạp tiền:" : "Depositing:"}{" "}
+                <span className="text-secondary">${amount.toLocaleString()}</span>
               </span>
               <button
                 onClick={() => {
@@ -273,7 +277,7 @@ export default function DepositModal({
                 }}
                 className="ml-auto text-xs text-on-surface-variant hover:text-on-surface font-label-bold transition-colors"
               >
-                Change amount
+                {locale === "vi" ? "Thay đổi số tiền" : "Change amount"}
               </button>
             </div>
             <Elements
@@ -295,9 +299,12 @@ export default function DepositModal({
             >
               <CheckoutForm
                 paymentIntentId={paymentIntentId}
+                amount={amount}
                 onSuccess={(newBalance) => {
                   setSuccessMsg(
-                    `$${amount.toLocaleString()} has been added to your wallet. Your balance will update shortly.`
+                    locale === "vi"
+                      ? `$${amount.toLocaleString()} đã được nạp vào ví của bạn. Số dư sẽ cập nhật ngay.`
+                      : `$${amount.toLocaleString()} has been added to your wallet. Your balance will update shortly.`
                   );
                   onDepositSuccess?.();
                 }}
