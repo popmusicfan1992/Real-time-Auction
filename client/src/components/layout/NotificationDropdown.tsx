@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Notification {
   id: string;
@@ -25,9 +27,77 @@ const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
   SYSTEM: { icon: "info", color: "text-primary" },
 };
 
-function timeAgo(dateStr: string): string {
+// Map notification type -> redirect URL
+function getNotificationUrl(notif: Notification): string | null {
+  const auctionId = notif.data?.auctionId;
+  switch (notif.type) {
+    case "BID_OUTBID":
+    case "AUCTION_WON":
+    case "AUCTION_LOST":
+    case "AUCTION_STARTING":
+      return auctionId ? `/auctions/${auctionId}` : "/auctions";
+    case "PAYMENT_SUCCESS":
+    case "DEPOSIT_RELEASED":
+      return "/wallet";
+    default:
+      return auctionId ? `/auctions/${auctionId}` : null;
+  }
+}
+
+// Localize notification content
+function localizeNotification(notif: Notification, locale: string): { title: string; message: string } {
+  if (locale !== "vi") return { title: notif.title, message: notif.message };
+
+  const auctionTitle = notif.data?.auctionTitle || notif.data?.title || "";
+  const amount = notif.data?.amount ? `$${parseFloat(notif.data.amount).toLocaleString()}` : "";
+
+  switch (notif.type) {
+    case "BID_OUTBID":
+      return {
+        title: "Bạn đã bị vượt giá!",
+        message: `Có người vừa đặt giá cao hơn bạn${auctionTitle ? ` cho "${auctionTitle}"` : ""}. Hãy đặt lại ngay!`,
+      };
+    case "AUCTION_WON":
+      return {
+        title: "🏆 Chúc mừng! Bạn đã thắng!",
+        message: `Bạn đã thắng phiên đấu giá${auctionTitle ? ` "${auctionTitle}"` : ""}${amount ? ` với giá ${amount}` : ""}. Xem chi tiết ngay.`,
+      };
+    case "AUCTION_LOST":
+      return {
+        title: "Phiên đấu giá đã kết thúc",
+        message: `Rất tiếc, bạn không thắng phiên đấu giá${auctionTitle ? ` "${auctionTitle}"` : ""}. Tiền cọc sẽ được hoàn lại.`,
+      };
+    case "AUCTION_STARTING":
+      return {
+        title: "⏰ Phiên đấu giá sắp bắt đầu!",
+        message: `Phiên đấu giá${auctionTitle ? ` "${auctionTitle}"` : ""} sẽ bắt đầu trong ít phút nữa.`,
+      };
+    case "PAYMENT_SUCCESS":
+      return {
+        title: "✅ Nạp tiền thành công",
+        message: `Ví của bạn đã được nạp thêm${amount ? ` ${amount}` : ""}. Sẵn sàng tham gia đấu giá!`,
+      };
+    case "DEPOSIT_RELEASED":
+      return {
+        title: "🔓 Tiền cọc đã được hoàn trả",
+        message: `Tiền cọc của bạn${amount ? ` (${amount})` : ""} đã được giải phóng về ví khả dụng.`,
+      };
+    default:
+      return { title: notif.title, message: notif.message };
+  }
+}
+
+function timeAgo(dateStr: string, locale: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const minutes = Math.floor(diff / 60000);
+  if (locale === "vi") {
+    if (minutes < 1) return "Vừa xong";
+    if (minutes < 60) return `${minutes} phút trước`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} giờ trước`;
+    const days = Math.floor(hours / 24);
+    return `${days} ngày trước`;
+  }
   if (minutes < 1) return "Just now";
   if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
@@ -38,6 +108,8 @@ function timeAgo(dateStr: string): string {
 
 export default function NotificationDropdown() {
   const { user } = useAuth();
+  const { locale } = useLanguage();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -47,15 +119,13 @@ export default function NotificationDropdown() {
   // Fetch unread count periodically
   useEffect(() => {
     if (!user) return;
-
     const fetchCount = () => {
       api.get("/notifications/unread-count")
         .then((res) => setUnreadCount(res.data.count))
         .catch(() => {});
     };
-
     fetchCount();
-    const interval = setInterval(fetchCount, 30000); // Poll every 30 seconds (was 10s)
+    const interval = setInterval(fetchCount, 30000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -74,14 +144,13 @@ export default function NotificationDropdown() {
   const handleToggle = async () => {
     const willOpen = !isOpen;
     setIsOpen(willOpen);
-
     if (willOpen && user) {
       setLoading(true);
       try {
         const res = await api.get("/notifications");
         setNotifications(res.data);
       } catch {
-        // ignore errors
+        // ignore
       } finally {
         setLoading(false);
       }
@@ -94,21 +163,24 @@ export default function NotificationDropdown() {
       await api.put("/notifications/read-all");
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
   };
 
-  // Mark one as read
-  const handleMarkRead = async (id: string) => {
-    try {
-      await api.put(`/notifications/${id}/read`);
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-      );
-      setUnreadCount((c) => Math.max(0, c - 1));
-    } catch {
-      // ignore
+  // Mark one as read + navigate
+  const handleNotifClick = async (notif: Notification) => {
+    if (!notif.isRead) {
+      try {
+        await api.put(`/notifications/${notif.id}/read`);
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === notif.id ? { ...n, isRead: true } : n))
+        );
+        setUnreadCount((c) => Math.max(0, c - 1));
+      } catch { /* ignore */ }
+    }
+    const url = getNotificationUrl(notif);
+    if (url) {
+      setIsOpen(false);
+      router.push(url);
     }
   };
 
@@ -119,6 +191,11 @@ export default function NotificationDropdown() {
       </button>
     );
   }
+
+  const headerTitle = locale === "vi" ? "Thông Báo" : "Notifications";
+  const markAllReadLabel = locale === "vi" ? "Đánh dấu đã đọc" : "Mark all read";
+  const viewAllLabel = locale === "vi" ? "Xem Tất Cả" : "View All";
+  const emptyLabel = locale === "vi" ? "Chưa có thông báo nào" : "No notifications yet";
 
   return (
     <div ref={dropdownRef} className="relative">
@@ -141,7 +218,7 @@ export default function NotificationDropdown() {
           {/* Header */}
           <div className="px-4 py-3 border-b border-outline-variant flex justify-between items-center">
             <h3 className="font-label-bold text-sm text-on-surface uppercase tracking-wider">
-              Notifications
+              {headerTitle}
             </h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
@@ -149,7 +226,7 @@ export default function NotificationDropdown() {
                   onClick={handleMarkAllRead}
                   className="text-[11px] font-label-bold text-tertiary hover:text-tertiary-fixed transition-colors"
                 >
-                  Mark all read
+                  {markAllReadLabel}
                 </button>
               )}
               <Link
@@ -157,7 +234,7 @@ export default function NotificationDropdown() {
                 onClick={() => setIsOpen(false)}
                 className="text-[11px] font-label-bold text-on-surface-variant hover:text-on-surface transition-colors"
               >
-                View All
+                {viewAllLabel}
               </Link>
             </div>
           </div>
@@ -173,20 +250,21 @@ export default function NotificationDropdown() {
                 <span className="material-symbols-outlined text-[40px] text-on-surface-variant/30 mb-2 block">
                   notifications_off
                 </span>
-                <p className="text-on-surface-variant text-sm">No notifications yet</p>
+                <p className="text-on-surface-variant text-sm">{emptyLabel}</p>
               </div>
             ) : (
               notifications.slice(0, 8).map((notif) => {
                 const iconConfig = NOTIFICATION_ICONS[notif.type] || NOTIFICATION_ICONS.SYSTEM;
-                const auctionId = notif.data?.auctionId;
+                const { title, message } = localizeNotification(notif, locale);
+                const hasLink = !!getNotificationUrl(notif);
 
                 return (
                   <div
                     key={notif.id}
-                    onClick={() => !notif.isRead && handleMarkRead(notif.id)}
-                    className={`px-4 py-3 border-b border-outline-variant/50 hover:bg-surface-container transition-colors cursor-pointer flex gap-3 ${
-                      !notif.isRead ? "bg-surface-container/50" : ""
-                    }`}
+                    onClick={() => handleNotifClick(notif)}
+                    className={`px-4 py-3 border-b border-outline-variant/50 transition-colors flex gap-3 ${
+                      hasLink ? "cursor-pointer hover:bg-surface-container" : "cursor-default"
+                    } ${!notif.isRead ? "bg-surface-container/50" : ""}`}
                   >
                     {/* Icon */}
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -203,28 +281,21 @@ export default function NotificationDropdown() {
                         <p className={`font-label-bold text-sm leading-tight ${
                           !notif.isRead ? "text-on-surface" : "text-on-surface-variant"
                         }`}>
-                          {notif.title}
+                          {title}
                         </p>
                         {!notif.isRead && (
                           <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 mt-1.5" />
                         )}
                       </div>
                       <p className="font-body-md text-xs text-on-surface-variant line-clamp-2 mt-0.5">
-                        {notif.message}
+                        {message}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] text-outline">{timeAgo(notif.createdAt)}</span>
-                        {auctionId && (
-                          <Link
-                            href={`/auctions/${auctionId}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setIsOpen(false);
-                            }}
-                            className="text-[10px] font-label-bold text-tertiary hover:text-tertiary-fixed transition-colors"
-                          >
-                            View Auction →
-                          </Link>
+                        <span className="text-[10px] text-outline">{timeAgo(notif.createdAt, locale)}</span>
+                        {hasLink && (
+                          <span className="text-[10px] font-label-bold text-tertiary">
+                            {locale === "vi" ? "Xem ngay →" : "View →"}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -238,3 +309,5 @@ export default function NotificationDropdown() {
     </div>
   );
 }
+
+

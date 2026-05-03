@@ -33,6 +33,9 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
   const [isAuctionEnded, setIsAuctionEnded] = useState(false);
   const [auctionEndedData, setAuctionEndedData] = useState<any>(null);
 
+  // Bid Confirmation popup state
+  const [showBidConfirm, setShowBidConfirm] = useState(false);
+
   // Chat state
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [chatInput, setChatInput] = useState("");
@@ -172,7 +175,7 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
     });
 
     socketInstance.on("outbid_alert", (data) => {
-      alert(`⚠️ You've been outbid! New price: $${parseFloat(data.newAmount).toLocaleString()} on "${data.auctionTitle}".`);
+      setToast({ message: `⚠️ Bạn bị vượt giá! Giá mới: $${parseFloat(data.newAmount).toLocaleString()} — "${data.auctionTitle}"`, type: "error" });
       if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
     });
 
@@ -189,23 +192,28 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
     };
   }, [id, user?.id]);
 
-  const handlePlaceBid = async () => {
+  // Opens the confirmation popup
+  const handlePlaceBid = () => {
     if (!user) {
-      alert("Please log in to place a bid.");
+      setToast({ message: locale === "vi" ? "Vui lòng đăng nhập để đặt giá." : "Please log in to place a bid.", type: "error" });
       return;
     }
-    
+    setShowBidConfirm(true);
+  };
+
+  // Actually submits the bid after confirmation
+  const handleConfirmBid = async () => {
     const bidAmount = currentBid + selectedIncrement;
-    
     setIsBidding(true);
+    setShowBidConfirm(false);
     try {
       await api.post("/bids", {
         auctionId: id,
         amount: bidAmount
       });
-      // Socket will receive the "new_bid" event and update UI automatically
+      setToast({ message: locale === "vi" ? `✅ Đặt giá $${bidAmount.toLocaleString()} thành công!` : `✅ Bid $${bidAmount.toLocaleString()} placed successfully!`, type: "success" });
     } catch (err: any) {
-      alert(err.response?.data?.message || "Failed to place bid");
+      setToast({ message: err.response?.data?.message || (locale === "vi" ? "Đặt giá thất bại" : "Failed to place bid"), type: "error" });
     } finally {
       setIsBidding(false);
     }
@@ -569,6 +577,94 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
           </div>
         </div>
       </div>
+
+      {/* ===== Place Bid Confirmation Modal ===== */}
+      {showBidConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-surface-container-high rounded-2xl max-w-md w-full p-6 shadow-2xl border border-outline-variant space-y-5 animate-[fadeIn_0.2s_ease-out]">
+            {/* Header */}
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto rounded-full bg-amber-500/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-[32px] text-amber-400">gavel</span>
+              </div>
+              <h2 className="font-headline-md text-2xl font-bold text-on-surface">
+                {locale === "vi" ? "Xác Nhận Đặt Giá" : "Confirm Your Bid"}
+              </h2>
+              <p className="text-on-surface-variant text-sm">
+                {locale === "vi" ? "Bạn sắp đặt giá cho phiên đấu giá này." : "You are about to place a bid on this auction."}
+              </p>
+            </div>
+
+            {/* Item Details */}
+            <div className="bg-surface-container rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <img
+                  src={auction.images[0]}
+                  alt={auction.title}
+                  className="w-12 h-12 rounded-lg object-cover"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="font-label-bold text-sm text-on-surface truncate">{auction.title}</p>
+                  <p className="text-xs text-on-surface-variant">{auction.category}</p>
+                </div>
+              </div>
+              <div className="border-t border-outline-variant/50 pt-3 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-on-surface-variant">
+                    {locale === "vi" ? "Giá Hiện Tại" : "Current Bid"}
+                  </span>
+                  <span className="font-price-display text-sm font-bold text-on-surface">${currentBid.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-on-surface-variant">
+                    {locale === "vi" ? "Bước Giá" : "Increment"}
+                  </span>
+                  <span className="font-price-display text-sm font-bold text-on-surface">+${selectedIncrement.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-t border-outline-variant/50 pt-2">
+                  <span className="text-sm font-bold text-on-surface">
+                    {locale === "vi" ? "Giá Đặt Của Bạn" : "Your Bid Amount"}
+                  </span>
+                  <span className="font-price-display text-xl font-extrabold text-amber-400">
+                    ${(currentBid + selectedIncrement).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Warning */}
+            <p className="text-xs text-on-surface-variant text-center">
+              {locale === "vi"
+                ? "⚠️ Sau khi xác nhận, lệnh đặt giá sẽ được gửi ngay lập tức và không thể thu hồi."
+                : "⚠️ Once confirmed, your bid will be submitted immediately and cannot be retracted."}
+            </p>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowBidConfirm(false)}
+                className="flex-1 py-3 rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-label-bold"
+              >
+                {locale === "vi" ? "Hủy" : "Cancel"}
+              </button>
+              <button
+                onClick={handleConfirmBid}
+                disabled={isBidding}
+                className="flex-1 py-3 rounded-xl bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 transition-colors shadow-[0_0_20px_rgba(245,158,11,0.3)] disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isBidding ? (
+                  <div className="w-5 h-5 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-[20px]">gavel</span>
+                    {locale === "vi" ? "Xác Nhận Đặt Giá" : "Confirm Bid"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Buy Now Confirmation Modal */}
       {showBuyNowConfirm && auction.buyNowPrice && (
