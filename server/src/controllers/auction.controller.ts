@@ -130,7 +130,7 @@ export const getAuctionById = async (req: Request, res: Response) => {
 // Get chat messages for an auction
 export const getChatMessages = async (req: Request, res: Response) => {
   try {
-    const auctionId = req.params.id;
+    const auctionId = req.params.id as string;
 
     const messages = await prisma.chatMessage.findMany({
       where: { auctionId },

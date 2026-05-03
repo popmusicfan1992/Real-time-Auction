@@ -34,7 +34,7 @@ export const getUnreadCount = async (req: AuthRequest, res: Response) => {
 export const markAsRead = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const notification = await prisma.notification.findFirst({
       where: { id, userId },
@@ -73,7 +73,7 @@ export const markAllAsRead = async (req: AuthRequest, res: Response) => {
 export const deleteNotification = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const notification = await prisma.notification.findFirst({
       where: { id, userId },
