@@ -1,8 +1,8 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm install && npx prisma generate && npx tsc -p tsconfig.build.json && npx tsc-alias -p tsconfig.build.json"
+buildCommand = "npm install && npx prisma generate"
 
 [deploy]
-startCommand = "npm start"
+startCommand = "npx tsx src/server.ts"
 healthcheckPath = "/api/auctions"
 restartPolicyType = "ON_FAILURE"
