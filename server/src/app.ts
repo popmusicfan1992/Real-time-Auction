@@ -17,6 +17,9 @@ dotenv.config();
 
 const app: Application = express();
 
+// Trust Railway/Vercel reverse proxy (needed for HTTPS OAuth callbacks)
+app.set("trust proxy", 1);
+
 // Middlewares
 app.use(helmet());
 app.use(cors({
