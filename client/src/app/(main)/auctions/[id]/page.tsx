@@ -49,8 +49,11 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
 
   // Scroll chat to bottom when new messages arrive
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatMessages]);
+    if (chatEndRef.current && chatEndRef.current.parentElement) {
+      const parent = chatEndRef.current.parentElement;
+      parent.scrollTo({ top: parent.scrollHeight, behavior: "smooth" });
+    }
+  }, [chatMessages, isBotTyping]);
 
   // Sync state when auction data is loaded
   useEffect(() => {
