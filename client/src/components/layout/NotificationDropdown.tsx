@@ -38,7 +38,7 @@ function getNotificationUrl(notif: Notification): string | null {
       return auctionId ? `/auctions/${auctionId}` : "/auctions";
     case "PAYMENT_SUCCESS":
     case "DEPOSIT_RELEASED":
-      return "/wallet";
+      return "/dashboard/wallet";
     default:
       return auctionId ? `/auctions/${auctionId}` : null;
   }
