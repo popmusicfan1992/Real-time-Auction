@@ -132,7 +132,7 @@ async function main() {
     data: {
       title: 'Cartier Panthère Diamond Bracelet',
       description: 'Exquisite 18K white gold bracelet set with 12.5 carats of VVS diamonds. Cartier Paris hallmark, circa 1985. Comes with original Cartier box and certificate.||VI||Vòng tay vàng trắng 18K tinh xảo đính 12,5 carat kim cương VVS. Dấu Cartier Paris, khoảng năm 1985. Đi kèm hộp và giấy chứng nhận Cartier nguyên bản.',
-      images: ['https://images.unsplash.com/photo-1515562141589-67f0d569b6cc?q=80&w=2070&auto=format&fit=crop'],
+      images: ['https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=2070&auto=format&fit=crop'],
       category: "JEWELRY",
       startingPrice: 85000,
       currentPrice: 92000,
@@ -153,7 +153,7 @@ async function main() {
     data: {
       title: 'Porsche 911 Carrera RS 2.7 (1973)',
       description: 'One of the most iconic sports cars ever made. Matching numbers, fully restored to exact original specifications in Grand Prix White with Viper Green accents.||VI||Một trong những chiếc xe thể thao mang tính biểu tượng nhất từng được sản xuất. Số khớp, phục chế hoàn toàn theo thông số kỹ thuật gốc với màu Grand Prix White và điểm nhấn Viper Green.',
-      images: ['https://images.unsplash.com/photo-1503376713356-20092305848d?q=80&w=1920&auto=format&fit=crop'],
+      images: ['https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop'],
       category: "VEHICLES",
       startingPrice: 850000,
       currentPrice: 850000,

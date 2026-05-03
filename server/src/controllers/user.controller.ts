@@ -88,8 +88,8 @@ export const toggleWatchlist = async (req: AuthRequest, res: Response) => {
     const userId = req.user!.id;
     const { auctionId } = req.body;
 
-    const existing = await prisma.watchlist.findUnique({
-      where: { userId_auctionId: { userId, auctionId } }
+    const existing = await prisma.watchlist.findFirst({
+      where: { userId, auctionId }
     });
 
     if (existing) {

@@ -96,7 +96,7 @@ export default function AuctionsPage() {
   // Fetch watchlist
   useEffect(() => {
     if (user) {
-      api.get("/users/me/watchlist")
+      api.get("/users/me/watchlist", { skipAuthRedirect: true } as any)
         .then((res) => {
           const ids = res.data.map((w: any) => w.auction.id);
           setWatchlistSet(new Set(ids));
