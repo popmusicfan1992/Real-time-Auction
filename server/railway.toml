@@ -1,9 +1,9 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm install && npx prisma generate && npx prisma db push --accept-data-loss"
+buildCommand = "npm install && npx prisma generate"
 
 [deploy]
-startCommand = "npx tsx src/server.ts"
+startCommand = "npx prisma db push --accept-data-loss && npx tsx src/server.ts"
 healthcheckPath = "/health"
 restartPolicyType = "ON_FAILURE"
-healthcheckTimeout = 60
+healthcheckTimeout = 120
