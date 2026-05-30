@@ -5,9 +5,9 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
 // Model fallback chain: try each in order if quota is exhausted
 const MODEL_CHAIN = [
+  "gemini-2.5-flash",
   "gemini-2.0-flash-lite",
   "gemini-2.0-flash",
-  "gemini-1.5-flash",
 ];
 
 let ai: GoogleGenAI | null = null;

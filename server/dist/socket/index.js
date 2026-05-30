@@ -103,6 +103,25 @@ function initializeSocket(io) {
                         io.to(data.auctionId).emit("bot_typing", { isTyping: false });
                     }
                 }
+                else {
+                    const welcomeMessage = "Hello! I am GalleryX AI. How can I help you today? You can ask me about active auctions, bidding rules, deposits, or catalog items.";
+                    const botMessage = {
+                        id: `ai_${Date.now()}`,
+                        user: "GalleryX AI",
+                        message: welcomeMessage,
+                        isBot: true,
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    };
+                    await prisma_1.default.chatMessage.create({
+                        data: {
+                            auctionId: data.auctionId,
+                            sender: "GalleryX AI",
+                            message: welcomeMessage,
+                            isBot: true
+                        }
+                    });
+                    io.to(data.auctionId).emit("new_message", botMessage);
+                }
             }
         });
         socket.on("disconnect", () => {
