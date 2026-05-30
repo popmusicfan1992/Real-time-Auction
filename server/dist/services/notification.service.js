@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationService = void 0;
-const prisma_1 = __importDefault(require("@/config/prisma"));
+const prisma_1 = __importDefault(require("../config/prisma"));
 class NotificationService {
     static async create(userId, title, message, type, data) {
         return await prisma_1.default.notification.create({

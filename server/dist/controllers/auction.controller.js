@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAuction = exports.getHomeStats = exports.getChatMessages = exports.getAuctionById = exports.getAuctionCounts = exports.getAuctions = void 0;
-const prisma_1 = __importDefault(require("@/config/prisma"));
+const prisma_1 = __importDefault(require("../config/prisma"));
 // Get all auctions with filters
 const getAuctions = async (req, res) => {
     try {
@@ -142,7 +142,7 @@ const getChatMessages = async (req, res) => {
     }
 };
 exports.getChatMessages = getChatMessages;
-const cloudinary_1 = __importDefault(require("@/config/cloudinary"));
+const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 // Get homepage stats (public)
 const getHomeStats = async (req, res) => {
     try {

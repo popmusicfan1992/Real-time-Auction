@@ -8,20 +8,39 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const auth_routes_1 = __importDefault(require("@/routes/auth.routes"));
-const auction_routes_1 = __importDefault(require("@/routes/auction.routes"));
-const bid_routes_1 = __importDefault(require("@/routes/bid.routes"));
-const user_routes_1 = __importDefault(require("@/routes/user.routes"));
-const notification_routes_1 = __importDefault(require("@/routes/notification.routes"));
-const webhook_routes_1 = __importDefault(require("@/routes/webhook.routes"));
-const wallet_routes_1 = __importDefault(require("@/routes/wallet.routes"));
-const passport_1 = __importDefault(require("@/config/passport"));
+const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
+const auction_routes_1 = __importDefault(require("./routes/auction.routes"));
+const bid_routes_1 = __importDefault(require("./routes/bid.routes"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
+const notification_routes_1 = __importDefault(require("./routes/notification.routes"));
+const webhook_routes_1 = __importDefault(require("./routes/webhook.routes"));
+const wallet_routes_1 = __importDefault(require("./routes/wallet.routes"));
+const passport_1 = __importDefault(require("./config/passport"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+// Trust Railway/Vercel reverse proxy (needed for HTTPS OAuth callbacks)
+app.set("trust proxy", 1);
 // Middlewares
 app.use((0, helmet_1.default)());
+const allowedOrigins = [
+    process.env.CLIENT_URL || "http://localhost:3000",
+    "http://localhost:3000",
+    "https://real-time-auction-sooty.vercel.app",
+].filter(Boolean);
 app.use((0, cors_1.default)({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+        // Allow requests with no origin (e.g., mobile apps, curl, Postman)
+        if (!origin)
+            return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        // Also allow any *.vercel.app preview deployments
+        if (origin.endsWith(".vercel.app")) {
+            return callback(null, true);
+        }
+        callback(new Error(`CORS: Origin ${origin} not allowed`));
+    },
     credentials: true
 }));
 app.use((0, morgan_1.default)("dev"));

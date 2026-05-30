@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const express_2 = __importDefault(require("express"));
-const stripe_1 = require("@/config/stripe");
-const prisma_1 = __importDefault(require("@/config/prisma"));
-const notification_service_1 = require("@/services/notification.service");
+const stripe_1 = require("../config/stripe");
+const prisma_1 = __importDefault(require("../config/prisma"));
+const notification_service_1 = require("../services/notification.service");
 const router = (0, express_1.Router)();
 // Endpoint webhook phải nhận raw body để Stripe xác minh chữ ký (signature)
 router.post("/stripe", express_2.default.raw({ type: "application/json" }), async (req, res) => {

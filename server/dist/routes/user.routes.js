@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const user_controller_1 = require("@/controllers/user.controller");
-const auth_1 = require("@/middleware/auth");
+const user_controller_1 = require("../controllers/user.controller");
+const auth_1 = require("../middleware/auth");
 const router = (0, express_1.Router)();
 // Phải yêu cầu đăng nhập
 router.use(auth_1.authenticate);

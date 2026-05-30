@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuctionService = void 0;
-const prisma_1 = __importDefault(require("@/config/prisma"));
-const redis_1 = require("@/config/redis");
-const notification_service_1 = require("@/services/notification.service");
+const prisma_1 = __importDefault(require("../config/prisma"));
+const redis_1 = require("../config/redis");
+const notification_service_1 = require("../services/notification.service");
 class AuctionService {
     static async closeAuction(auctionId) {
         try {

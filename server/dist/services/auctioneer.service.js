@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleAuctioneerBot = handleAuctioneerBot;
-const prisma_1 = __importDefault(require("@/config/prisma"));
-const chatbot_service_1 = require("@/services/chatbot.service");
+const prisma_1 = __importDefault(require("../config/prisma"));
+const chatbot_service_1 = require("../services/chatbot.service");
 async function handleAuctioneerBot(io, auctionId, currentPrice, bidderName) {
     try {
         // Generate AI-powered bid announcement

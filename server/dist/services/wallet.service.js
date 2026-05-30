@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletService = void 0;
-const stripe_1 = require("@/config/stripe");
-const prisma_1 = __importDefault(require("@/config/prisma"));
-const notification_service_1 = require("@/services/notification.service");
+const stripe_1 = require("../config/stripe");
+const prisma_1 = __importDefault(require("../config/prisma"));
+const notification_service_1 = require("../services/notification.service");
 class WalletService {
     // 1. Lấy thông tin ví
     static async getWallet(userId) {

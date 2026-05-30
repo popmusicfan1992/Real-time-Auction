@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const auction_controller_1 = require("@/controllers/auction.controller");
-const auth_1 = require("@/middleware/auth");
-const upload_1 = require("@/middleware/upload");
+const auction_controller_1 = require("../controllers/auction.controller");
+const auth_1 = require("../middleware/auth");
+const upload_1 = require("../middleware/upload");
 const router = (0, express_1.Router)();
 // Public routes
 router.get("/", auction_controller_1.getAuctions);

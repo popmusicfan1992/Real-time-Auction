@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BiddingService = void 0;
-const prisma_1 = __importDefault(require("@/config/prisma"));
-const redis_1 = require("@/config/redis");
+const prisma_1 = __importDefault(require("../config/prisma"));
+const redis_1 = require("../config/redis");
 const library_1 = require("@prisma/client/runtime/library");
-const notification_service_1 = require("@/services/notification.service");
+const notification_service_1 = require("../services/notification.service");
 class BiddingService {
     static async placeBid(userId, auctionId, bidAmount) {
         const amount = new library_1.Decimal(bidAmount);

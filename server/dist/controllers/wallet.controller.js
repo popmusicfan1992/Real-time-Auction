@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createWithdraw = exports.confirmDeposit = exports.createDeposit = exports.getMyWallet = void 0;
-const wallet_service_1 = require("@/services/wallet.service");
+const wallet_service_1 = require("../services/wallet.service");
 const getMyWallet = async (req, res) => {
     try {
         const userId = req.user.id;

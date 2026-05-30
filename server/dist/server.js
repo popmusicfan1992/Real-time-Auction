@@ -16,7 +16,7 @@ const io = new socket_io_1.Server(server, {
     },
 });
 exports.io = io;
-const socket_1 = require("@/socket");
+const socket_1 = require("./socket");
 // Socket.io Logic
 (0, socket_1.initializeSocket)(io);
 server.listen(PORT, () => {

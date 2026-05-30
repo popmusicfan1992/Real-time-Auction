@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const auth_controller_1 = require("@/controllers/auth.controller");
-const passport_1 = __importDefault(require("@/config/passport"));
+const auth_controller_1 = require("../controllers/auth.controller");
+const passport_1 = __importDefault(require("../config/passport"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const router = (0, express_1.Router)();
 // Email/Password Auth

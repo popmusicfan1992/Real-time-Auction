@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMyAuctions = exports.updateMyProfile = exports.getMyProfile = exports.toggleWatchlist = exports.getWatchlist = exports.getDashboardStats = void 0;
-const prisma_1 = __importDefault(require("@/config/prisma"));
+const prisma_1 = __importDefault(require("../config/prisma"));
 // Lấy thông tin thống kê tổng quan
 const getDashboardStats = async (req, res) => {
     try {
@@ -87,8 +87,8 @@ const toggleWatchlist = async (req, res) => {
     try {
         const userId = req.user.id;
         const { auctionId } = req.body;
-        const existing = await prisma_1.default.watchlist.findUnique({
-            where: { userId_auctionId: { userId, auctionId } }
+        const existing = await prisma_1.default.watchlist.findFirst({
+            where: { userId, auctionId }
         });
         if (existing) {
             await prisma_1.default.watchlist.delete({

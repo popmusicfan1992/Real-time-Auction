@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buyNow = exports.placeBid = void 0;
-const bid_service_1 = require("@/services/bid.service");
+const bid_service_1 = require("../services/bid.service");
 const placeBid = async (req, res) => {
     try {
         const { auctionId, amount } = req.body;

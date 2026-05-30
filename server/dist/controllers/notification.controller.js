@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteNotification = exports.markAllAsRead = exports.markAsRead = exports.getUnreadCount = exports.getNotifications = void 0;
-const prisma_1 = __importDefault(require("@/config/prisma"));
+const prisma_1 = __importDefault(require("../config/prisma"));
 // Get all notifications for the authenticated user
 const getNotifications = async (req, res) => {
     try {
@@ -39,7 +39,7 @@ exports.getUnreadCount = getUnreadCount;
 const markAsRead = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { id } = req.params;
+        const id = req.params.id;
         const notification = await prisma_1.default.notification.findFirst({
             where: { id, userId },
         });
@@ -76,7 +76,7 @@ exports.markAllAsRead = markAllAsRead;
 const deleteNotification = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { id } = req.params;
+        const id = req.params.id;
         const notification = await prisma_1.default.notification.findFirst({
             where: { id, userId },
         });

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateChatResponse = generateChatResponse;
 exports.generateBidAnnouncement = generateBidAnnouncement;
 const genai_1 = require("@google/genai");
-const prisma_1 = __importDefault(require("@/config/prisma"));
+const prisma_1 = __importDefault(require("../config/prisma"));
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 // Model fallback chain: try each in order if quota is exhausted
 const MODEL_CHAIN = [
