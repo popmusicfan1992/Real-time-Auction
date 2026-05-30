@@ -65,9 +65,8 @@ export function initializeSocket(io: Server) {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
 
-      // Check if user is asking the AI bot (starts with @ai, @bot, or a question mark)
-      const msg = data.message.trim().toLowerCase();
-      const isAIQuery = msg.startsWith("@ai") || msg.startsWith("@bot") || msg.startsWith("?");
+      // Check if user is asking the AI bot (all messages in this chat trigger the bot)
+      const isAIQuery = true;
 
       if (isAIQuery) {
         // Strip the prefix to get the actual question
