@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 // Khởi tạo một fetcher tuân chuẩn Next.js fetch API để lấy dữ liệu SSR
 async function getAuction(id: string) {
   try {
-    const res = await fetch(`http://localhost:4000/api/auctions/${id}`, { next: { revalidate: 60 } });
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+    const res = await fetch(`${API_URL}/auctions/${id}`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
     return res.json();
   } catch (error) {

@@ -22,8 +22,26 @@ app.set("trust proxy", 1);
 
 // Middlewares
 app.use(helmet());
+
+const allowedOrigins = [
+  process.env.CLIENT_URL || "http://localhost:3000",
+  "http://localhost:3000",
+  "https://real-time-auction-sooty.vercel.app",
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g., mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    // Also allow any *.vercel.app preview deployments
+    if (origin.endsWith(".vercel.app")) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS: Origin ${origin} not allowed`));
+  },
   credentials: true
 }));
 app.use(morgan("dev"));
