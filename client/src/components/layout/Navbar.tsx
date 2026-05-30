@@ -101,8 +101,8 @@ export default function Navbar() {
                 <Link href="/dashboard/profile">
                   <img
                     alt="User profile avatar"
-                    className="w-10 h-10 rounded-full border border-white/20 hover:border-amber-500 transition-colors cursor-pointer"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtEsUgPP-7r0ywwFrO4AFHuO51B_jdW9vP46kx6X_XfxBfcogeZNiBsorkE8XWzEU6KY62EWVOw0dGrrma6xq51njkgG8UZdfzxX5lM6Q0IJjv5-5iiPJwYTiRmVp_cQ0zWMl1JA3Iynv3bPeshxrRfh9Af6xmqxS2P7rNUb9iMbC9xzRIgFXThRvTXIc_0AAVTTZjKaiDlMRfcAOXiGdBAORUhiEk1nygEYQrIyRNwaQlRss7bkRDKqWuTS_OeHObrb31WeqGXPg"
+                    className="w-10 h-10 rounded-full border border-white/20 hover:border-amber-500 transition-colors cursor-pointer object-cover"
+                    src={user.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100"}
                   />
                 </Link>
                 <div className="absolute right-0 mt-2 w-48 bg-surface-container border border-outline-variant rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">

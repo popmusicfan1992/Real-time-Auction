@@ -7,6 +7,7 @@ import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import CountdownTimer from "@/components/ui/CountdownTimer";
+import HomepageChatbot from "@/components/layout/HomepageChatbot";
 
 interface Auction {
   id: string;
@@ -690,6 +691,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <HomepageChatbot />
     </>
   );
 }

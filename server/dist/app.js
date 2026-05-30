@@ -13,6 +13,7 @@ const auction_routes_1 = __importDefault(require("./routes/auction.routes"));
 const bid_routes_1 = __importDefault(require("./routes/bid.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const notification_routes_1 = __importDefault(require("./routes/notification.routes"));
+const chatbot_routes_1 = __importDefault(require("./routes/chatbot.routes"));
 const webhook_routes_1 = __importDefault(require("./routes/webhook.routes"));
 const wallet_routes_1 = __importDefault(require("./routes/wallet.routes"));
 const passport_1 = __importDefault(require("./config/passport"));
@@ -61,6 +62,7 @@ app.use("/api/bids", bid_routes_1.default);
 app.use("/api/wallet", wallet_routes_1.default);
 app.use("/api/users", user_routes_1.default);
 app.use("/api/notifications", notification_routes_1.default);
+app.use("/api/chatbot", chatbot_routes_1.default);
 // Error Handling Middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);

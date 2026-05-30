@@ -8,6 +8,7 @@ import auctionRoutes from "@/routes/auction.routes";
 import bidRoutes from "@/routes/bid.routes";
 import userRoutes from "@/routes/user.routes";
 import notificationRoutes from "@/routes/notification.routes";
+import chatbotRoutes from "@/routes/chatbot.routes";
 
 import webhookRoutes from "@/routes/webhook.routes";
 import walletRoutes from "@/routes/wallet.routes";
@@ -68,6 +69,7 @@ app.use("/api/bids", bidRoutes);
 app.use("/api/wallet", walletRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/chatbot", chatbotRoutes);
 
 // Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
