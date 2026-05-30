@@ -5,9 +5,81 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAuction = exports.getHomeStats = exports.getChatMessages = exports.getAuctionById = exports.getAuctionCounts = exports.getAuctions = void 0;
 const prisma_1 = __importDefault(require("../config/prisma"));
+// Auto-renew seed data auctions when all of them have ended
+const autoRenewAuctions = async () => {
+    try {
+        const activeCount = await prisma_1.default.auction.count({
+            where: { status: "ACTIVE" },
+        });
+        if (activeCount === 0) {
+            console.log("🔄 No active auctions found. Automatically renewing seed data...");
+            const now = new Date();
+            const auctions = await prisma_1.default.auction.findMany();
+            for (const auction of auctions) {
+                let status = "ACTIVE";
+                let startTime = new Date(now.getTime() - 2 * 60 * 60 * 1000); // 2 hours ago
+                let endTime = new Date(now.getTime() + 6 * 60 * 60 * 1000); // 6 hours from now
+                if (auction.title.includes("Porsche") ||
+                    auction.title.includes("Gatsby") ||
+                    auction.title.includes("Royal Oak") ||
+                    auction.title.includes("Himalaya")) {
+                    status = "SCHEDULED";
+                    startTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 day from now
+                    endTime = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+                }
+                else if (auction.title.includes("Bordeaux") ||
+                    auction.title.includes("Macintosh")) {
+                    status = "ENDED";
+                    startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+                    endTime = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 day ago
+                }
+                // Specific adjustments to match the original seed durations
+                if (auction.title.includes("Rolex")) {
+                    startTime = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+                    endTime = new Date(now.getTime() + 6 * 60 * 60 * 1000);
+                }
+                else if (auction.title.includes("Midnight")) {
+                    startTime = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+                    endTime = new Date(now.getTime() + 12 * 60 * 60 * 1000);
+                }
+                else if (auction.title.includes("Leica")) {
+                    startTime = new Date(now.getTime() - 1 * 60 * 60 * 1000);
+                    endTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                }
+                else if (auction.title.includes("Cartier")) {
+                    startTime = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+                    endTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+                }
+                await prisma_1.default.$transaction([
+                    // Reset bids, holds, reminders, and messages to keep it fresh
+                    prisma_1.default.bid.deleteMany({ where: { auctionId: auction.id } }),
+                    prisma_1.default.depositHold.deleteMany({ where: { auctionId: auction.id } }),
+                    prisma_1.default.reminder.deleteMany({ where: { auctionId: auction.id } }),
+                    prisma_1.default.chatMessage.deleteMany({ where: { auctionId: auction.id } }),
+                    // Update auction fields
+                    prisma_1.default.auction.update({
+                        where: { id: auction.id },
+                        data: {
+                            status,
+                            startTime,
+                            endTime,
+                            currentPrice: auction.startingPrice,
+                            winnerId: null,
+                        },
+                    }),
+                ]);
+            }
+            console.log("✅ Seed data auto-renewed successfully.");
+        }
+    }
+    catch (error) {
+        console.error("Error auto-renewing auctions:", error);
+    }
+};
 // Get all auctions with filters
 const getAuctions = async (req, res) => {
     try {
+        await autoRenewAuctions();
         const status = req.query.status;
         const category = req.query.category;
         const tab = req.query.tab;
@@ -56,6 +128,7 @@ exports.getAuctions = getAuctions;
 // Get auction counts grouped by category and status
 const getAuctionCounts = async (req, res) => {
     try {
+        await autoRenewAuctions();
         // Count by category
         const categoryCounts = await prisma_1.default.auction.groupBy({
             by: ["category"],
@@ -146,6 +219,7 @@ const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 // Get homepage stats (public)
 const getHomeStats = async (req, res) => {
     try {
+        await autoRenewAuctions();
         // Run all independent queries in parallel for faster response
         const [totalBids, volumeResult, activeBidders, recentBids, endedAuctions] = await Promise.all([
             // Total bids count
