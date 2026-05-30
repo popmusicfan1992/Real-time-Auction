@@ -8,6 +8,8 @@ import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getLocalizedDescription } from "@/lib/description-parser";
+import Skeleton from "@/components/ui/Skeleton";
+
 
 const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
@@ -270,7 +272,107 @@ export default function LiveBiddingRoom({ params }: { params: Promise<{ id: stri
     }
     return <div className="min-h-screen flex items-center justify-center pt-24 text-error">{t("auctionDetail.failedToLoad")}</div>;
   }
-  if (!auction) return <div className="min-h-screen pt-24 text-center text-on-surface">{t("auctionDetail.loadingRoom")}</div>;
+  if (!auction) {
+    return (
+      <div className="max-w-7xl mx-auto w-full pt-24 pb-20 px-4 md:px-6 space-y-6">
+        {/* Breadcrumb Skeleton */}
+        <div className="flex items-center gap-2">
+          <Skeleton variant="text" width={80} height={12} />
+          <span className="text-on-surface-variant text-[14px]">/</span>
+          <Skeleton variant="text" width={120} height={12} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
+          {/* Left: Image + Info */}
+          <div className="lg:col-span-5 space-y-4">
+            <Skeleton className="w-full aspect-square rounded-xl animate-pulse-glow" />
+            <div className="bg-surface-container rounded-xl p-5 border border-outline-variant space-y-4">
+              <div className="flex items-center gap-2">
+                <Skeleton variant="rectangular" width={60} height={20} className="rounded" />
+                <Skeleton variant="text" width={80} height={12} />
+              </div>
+              <Skeleton variant="text" width="70%" height={24} />
+              <div className="space-y-2 pt-2">
+                <Skeleton variant="text" width="100%" height={12} />
+                <Skeleton variant="text" width="95%" height={12} />
+                <Skeleton variant="text" width="60%" height={12} />
+              </div>
+            </div>
+          </div>
+
+          {/* Center: Bidding Panel */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="bg-surface-container rounded-xl p-6 border border-outline-variant flex flex-col items-center">
+              <Skeleton variant="text" width="40%" height={12} className="mb-3" />
+              <Skeleton variant="text" width="60%" height={40} className="mb-4" />
+              <Skeleton variant="rectangular" width="100%" height={6} className="rounded-full mb-6 animate-pulse-glow" />
+              <div className="flex justify-between items-center w-full">
+                <div className="space-y-2">
+                  <Skeleton variant="text" width={80} height={10} />
+                  <Skeleton variant="text" width={100} height={24} />
+                </div>
+                <div className="space-y-2 text-right">
+                  <Skeleton variant="text" width={80} height={10} />
+                  <Skeleton variant="text" width={70} height={18} />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-surface-container rounded-xl p-5 border border-outline-variant space-y-5">
+              <Skeleton variant="text" width="40%" height={12} />
+              <div className="grid grid-cols-4 gap-2">
+                {Array(4).fill(0).map((_, i) => (
+                  <Skeleton key={i} variant="rectangular" height={36} className="rounded-lg" />
+                ))}
+              </div>
+              <Skeleton variant="rectangular" height={56} className="rounded-lg" />
+              <div className="flex justify-between items-center pt-2">
+                <Skeleton variant="text" width="35%" height={12} />
+                <Skeleton variant="text" width="45%" height={12} />
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Leaderboard + Chat */}
+          <div className="lg:col-span-3 space-y-4">
+            <div className="bg-surface-container rounded-xl border border-outline-variant overflow-hidden">
+              <div className="px-4 py-3 border-b border-outline-variant flex items-center gap-2">
+                <Skeleton variant="circular" width={20} height={20} />
+                <Skeleton variant="text" width="50%" height={12} />
+              </div>
+              <div className="p-4 space-y-3">
+                {Array(4).fill(0).map((_, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Skeleton variant="circular" width={24} height={24} />
+                    <Skeleton variant="text" width="60%" height={10} className="flex-grow" />
+                    <Skeleton variant="text" width="20%" height={10} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-surface-container rounded-xl border border-outline-variant overflow-hidden flex flex-col h-[300px]">
+              <div className="px-4 py-3 border-b border-outline-variant flex items-center gap-2">
+                <Skeleton variant="circular" width={20} height={20} />
+                <Skeleton variant="text" width="40%" height={12} />
+              </div>
+              <div className="p-4 flex-grow space-y-3 overflow-hidden">
+                {Array(3).fill(0).map((_, i) => (
+                  <div key={i} className="space-y-1">
+                    <Skeleton variant="text" width="30%" height={8} />
+                    <Skeleton variant="text" width="80%" height={12} />
+                  </div>
+                ))}
+              </div>
+              <div className="p-3 border-t border-outline-variant bg-surface-container-low/50">
+                <Skeleton variant="rectangular" height={36} className="rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const minInc = parseFloat(auction.minIncrement);
   const bidOptions = [minInc, minInc * 2, minInc * 5, minInc * 10];
