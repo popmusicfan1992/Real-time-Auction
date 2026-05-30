@@ -7,6 +7,8 @@ import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getLocalizedDescription } from "@/lib/description-parser";
+import Skeleton from "@/components/ui/Skeleton";
+
 
 interface Auction {
   id: string;
@@ -369,11 +371,28 @@ export default function AuctionsPage() {
 
         {/* Loading State */}
         {loading && (
-          <div className="flex justify-center items-center py-20">
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
-              <p className="text-on-surface-variant font-label-bold text-sm">{t("auctions.loadingAuctions")}</p>
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {Array(4).fill(0).map((_, idx) => (
+              <div key={idx} className="bg-surface-container rounded-xl overflow-hidden border border-white/5 p-5 space-y-5">
+                <Skeleton className="h-64 w-full animate-pulse-glow" />
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <Skeleton variant="text" width="20%" height={10} />
+                    <Skeleton variant="text" width="30%" height={10} />
+                  </div>
+                  <Skeleton variant="text" width="70%" height={22} />
+                  <Skeleton variant="text" width="90%" height={14} />
+                  <Skeleton variant="text" width="50%" height={14} />
+                </div>
+                <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                  <div className="space-y-1 flex-grow">
+                    <Skeleton variant="text" width={50} height={10} />
+                    <Skeleton variant="text" width={80} height={20} />
+                  </div>
+                  <Skeleton variant="rectangular" width={100} height={40} className="rounded-lg" />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

@@ -4,6 +4,8 @@ import Script from "next/script";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import "./globals.css";
+import { Suspense } from "react";
+import PageTransitionBar from "@/components/ui/PageTransitionBar";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -61,6 +63,9 @@ export default function RootLayout({
         />
         <AuthProvider>
           <LanguageProvider>
+            <Suspense fallback={null}>
+              <PageTransitionBar />
+            </Suspense>
             {children}
           </LanguageProvider>
         </AuthProvider>

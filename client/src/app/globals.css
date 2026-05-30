@@ -116,6 +116,16 @@
 .animate-pop-in { animation: pop-in 0.5s ease-out forwards; }
 .animate-float { animation: float 4s ease-in-out infinite; }
 .animate-bounce-subtle { animation: bounce-subtle 1.5s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 37%,
+    rgba(255, 255, 255, 0.03) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
 
 /* === Premium Transitions & Hover Effects === */
 .hover-scale {

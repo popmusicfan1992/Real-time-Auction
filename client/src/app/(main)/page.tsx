@@ -8,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import CountdownTimer from "@/components/ui/CountdownTimer";
 import HomepageChatbot from "@/components/layout/HomepageChatbot";
+import Skeleton from "@/components/ui/Skeleton";
+
 
 interface Auction {
   id: string;
@@ -236,60 +238,76 @@ export default function HomePage() {
 
         {/* Hero Image + Floating Bid Panel with real data */}
         <div className="lg:col-span-7 relative w-full aspect-[4/3] lg:aspect-auto lg:h-[600px] rounded-xl overflow-hidden group animate-pop-in hover-glow">
-          <img
-            className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-700"
-            alt={featuredAuction?.title || "Gallery X Auction"}
-            src={featuredAuction?.images[0] || "https://lh3.googleusercontent.com/aida-public/AB6AXuBYHKJal6gtIfWz3Y_Wy1Cy4LbBliFTiWx16aZgOAdqdE2B37BXKyGaq83sZFH1sJm9e3C3XAr4iQ5H9-ejRFxwC2u3B9T9Nmdk1qIp42K6zRLwE58sZg-JAnnuhZm1Bl3efITrkZnxiatxalmyfOSW-o1nGNN0xBmoy0pzLqzi3NeQR49Gwc8Ako3cIVuPIXR6M6V-nk6vNM7FDFubLTM9_DqMGUbbbYgf4VhEpggmU5CrBpKaEKec8nnFQMTbLuZfZMOXP-9Frh8"}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
+          {loading ? (
+            <Skeleton className="w-full h-full min-h-[400px] lg:h-[600px]" />
+          ) : (
+            <>
+              <img
+                className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-700"
+                alt={featuredAuction?.title || "Gallery X Auction"}
+                src={featuredAuction?.images[0] || "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=600"}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent pointer-events-none" />
 
-          {featuredAuction && (
-            <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-surface-container-high/60 backdrop-blur-xl border border-white/10 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] animate-float">
-              <p className="font-label-bold text-xs text-on-surface-variant mb-1 truncate">{featuredAuction.title}</p>
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <p className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">{t("home.currentBid")}</p>
-                  <p className="font-price-display text-3xl text-secondary mt-1">${parseFloat(featuredAuction.currentPrice).toLocaleString()}</p>
+              {featuredAuction && (
+                <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-surface-container-high/60 backdrop-blur-xl border border-white/10 rounded-xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.6)] animate-float">
+                  <p className="font-label-bold text-xs text-on-surface-variant mb-1 truncate">{featuredAuction.title}</p>
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-label-bold text-sm text-on-surface-variant uppercase tracking-wider">{t("home.currentBid")}</p>
+                      <p className="font-price-display text-3xl text-secondary mt-1">${parseFloat(featuredAuction.currentPrice).toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-label-bold text-[10px] text-error uppercase tracking-wider">{t("home.endsIn")}</p>
+                      <CountdownTimer
+                        endTime={featuredAuction.endTime}
+                        className="font-headline-md text-2xl text-on-surface mt-1 font-mono tracking-tighter animate-pulse-glow block"
+                      />
+                    </div>
+                  </div>
+                  <div className="h-1 w-full bg-surface-variant rounded-full mt-2 mb-4 overflow-hidden">
+                    <div className="h-full bg-error rounded-full" style={{
+                      width: `${Math.max(5, Math.min(100, 100 - ((new Date(featuredAuction.endTime).getTime() - Date.now()) / (new Date(featuredAuction.endTime).getTime() - new Date(featuredAuction.startTime).getTime())) * 100))}%`
+                    }} />
+                  </div>
+                  <button
+                    onClick={() => handleQuickBid(featuredAuction)}
+                    disabled={quickBidLoading === featuredAuction.id}
+                    className="w-full bg-amber-500/90 hover:bg-amber-400 text-slate-950 font-label-bold text-sm py-2.5 rounded-lg transition-all flex justify-center items-center gap-1.5 active:scale-[0.97] disabled:opacity-50"
+                  >
+                    {quickBidLoading === featuredAuction.id ? (
+                      <><div className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" /> {t("home.placing")}</>
+                    ) : (
+                      <><span className="material-symbols-outlined text-[18px]">gavel</span> {t("home.quickBid")} ${(parseFloat(featuredAuction.currentPrice) + parseFloat(featuredAuction.minIncrement)).toLocaleString()}</>
+                    )}
+                  </button>
                 </div>
-                <div className="text-right">
-                  <p className="font-label-bold text-[10px] text-error uppercase tracking-wider">{t("home.endsIn")}</p>
-                  <CountdownTimer
-                    endTime={featuredAuction.endTime}
-                    className="font-headline-md text-2xl text-on-surface mt-1 font-mono tracking-tighter animate-pulse-glow block"
-                  />
-                </div>
-              </div>
-              <div className="h-1 w-full bg-surface-variant rounded-full mt-2 mb-4 overflow-hidden">
-                <div className="h-full bg-error rounded-full" style={{
-                  width: `${Math.max(5, Math.min(100, 100 - ((new Date(featuredAuction.endTime).getTime() - Date.now()) / (new Date(featuredAuction.endTime).getTime() - new Date(featuredAuction.startTime).getTime())) * 100))}%`
-                }} />
-              </div>
-              <button
-                onClick={() => handleQuickBid(featuredAuction)}
-                disabled={quickBidLoading === featuredAuction.id}
-                className="w-full bg-amber-500/90 hover:bg-amber-400 text-slate-950 font-label-bold text-sm py-2.5 rounded-lg transition-all flex justify-center items-center gap-1.5 active:scale-[0.97] disabled:opacity-50"
-              >
-                {quickBidLoading === featuredAuction.id ? (
-                  <><div className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" /> {t("home.placing")}</>
-                ) : (
-                  <><span className="material-symbols-outlined text-[18px]">gavel</span> {t("home.quickBid")} ${(parseFloat(featuredAuction.currentPrice) + parseFloat(featuredAuction.minIncrement)).toLocaleString()}</>
-                )}
-              </button>
-            </div>
+              )}
+            </>
           )}
         </div>
       </section>
 
       {/* ===== 1. LIVE STATS BAR ===== */}
-      {homeStats && (
-        <section className="max-w-7xl mx-auto px-4 md:px-8 w-full animate-fade-in" style={{ animationDelay: '200ms' }}>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
+      <section className="max-w-7xl mx-auto px-4 md:px-8 w-full animate-fade-in" style={{ animationDelay: '200ms' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {!homeStats ? (
+            Array(3).fill(0).map((_, idx) => (
+              <div key={idx} className="bg-surface-container/80 border border-white/5 rounded-xl p-5 flex items-center gap-4">
+                <Skeleton variant="circular" width={48} height={48} className="shrink-0" />
+                <div className="flex-grow space-y-2">
+                  <Skeleton variant="text" width="60%" height={12} />
+                  <Skeleton variant="text" width="40%" height={24} />
+                </div>
+              </div>
+            ))
+          ) : (
+            [
               { icon: "trending_up", label: t("home.totalBidsPlaced"), value: homeStats.totalBids.toLocaleString(), suffix: "+", color: "from-primary/20 to-primary/5", iconColor: "text-primary" },
               { icon: "payments", label: t("home.totalVolume"), value: `$${(homeStats.totalVolume / 1000).toFixed(1)}K`, suffix: "+", color: "from-secondary/20 to-secondary/5", iconColor: "text-secondary" },
               { icon: "group", label: t("home.activeBidders"), value: homeStats.activeBidders.toLocaleString(), suffix: "+", color: "from-tertiary/20 to-tertiary/5", iconColor: "text-tertiary" },
             ].map((stat, idx) => (
-              <div key={stat.label} className="bg-surface-container/80 backdrop-blur-xl border border-white/5 rounded-xl p-5 flex items-center gap-4 hover:border-white/15 transition-all duration-300 group hover-scale animate-count-up" style={{ animationDelay: `${200 + idx * 150}ms` }}>
+              <div key={stat.label} className="bg-surface-container/80 backdrop-blur-xl border border-white/5 rounded-xl p-5 flex items-center gap-4 hover-glow transition-all duration-300 group hover-scale animate-count-up" style={{ animationDelay: `${200 + idx * 150}ms` }}>
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shrink-0`}>
                   <span className={`material-symbols-outlined ${stat.iconColor} text-2xl`}>{stat.icon}</span>
                 </div>
@@ -298,10 +316,10 @@ export default function HomePage() {
                   <p className="font-price-display text-2xl font-bold text-on-surface leading-tight">{stat.value}<span className="text-sm text-on-surface-variant">{stat.suffix}</span></p>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            ))
+          )}
+        </div>
+      </section>
 
       {/* ===== 5. INTERACTIVE HOW IT WORKS ===== */}
       <section id="how-it-works" className="max-w-7xl mx-auto px-4 md:px-8 w-full animate-fade-in" style={{ animationDelay: '300ms' }}>
@@ -363,8 +381,30 @@ export default function HomePage() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-16">
-            <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array(4).fill(0).map((_, idx) => (
+              <div key={idx} className="bg-surface-container rounded-xl overflow-hidden border border-white/5 p-4 space-y-4">
+                <Skeleton className="h-48 w-full animate-pulse-glow" />
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Skeleton variant="text" width="40%" height={10} />
+                    <Skeleton variant="text" width="30%" height={10} />
+                  </div>
+                  <Skeleton variant="text" width="85%" height={16} />
+                  <div className="flex items-center gap-2 pt-1">
+                    <Skeleton variant="circular" width={20} height={20} />
+                    <Skeleton variant="text" width="50%" height={10} />
+                  </div>
+                </div>
+                <div className="flex justify-between items-center pt-3 border-t border-white/5">
+                  <div className="space-y-1 flex-grow">
+                    <Skeleton variant="text" width={40} height={10} />
+                    <Skeleton variant="text" width="60%" height={14} />
+                  </div>
+                  <Skeleton variant="rectangular" width={60} height={24} className="rounded-lg" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : filteredLots.length === 0 ? (
           <div className="text-center py-16 text-on-surface-variant">{t("auctions.noAuctionsFound")}</div>
@@ -496,85 +536,110 @@ export default function HomePage() {
       </section>
 
       {/* ===== TOP COLLECTORS & RECENT ACTIVITY ===== */}
-      {homeStats && (homeStats.topCollectors.length > 0 || homeStats.recentBids.length > 0) && (
-        <section className="max-w-7xl mx-auto px-4 md:px-8 w-full animate-fade-in" style={{ animationDelay: '800ms' }}>
-          <h2 className="font-headline-lg text-3xl font-bold text-on-surface mb-6">{t("home.community")}</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Top Collectors */}
-            <div className="bg-surface-container rounded-xl border border-white/5 p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <span className="material-symbols-outlined text-secondary text-2xl">emoji_events</span>
-                <h3 className="font-headline-md text-xl font-semibold text-on-surface">{t("home.topCollectors")}</h3>
-              </div>
-              {homeStats.topCollectors.length === 0 ? (
-                <p className="text-on-surface-variant text-sm">{t("home.noDataYet")}</p>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {homeStats.topCollectors.map((collector, idx) => (
-                    <div key={collector.name + idx} className="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low/50 hover:bg-surface-container-high/50 transition-colors">
-                      <span className={`font-price-display text-lg font-bold w-6 text-center ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-slate-300' : idx === 2 ? 'text-amber-700' : 'text-on-surface-variant'}`}>
-                        {idx + 1}
-                      </span>
-                      <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
-                        {collector.avatar ? (
-                          <img src={collector.avatar} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="material-symbols-outlined text-on-surface-variant">person</span>
-                        )}
-                      </div>
-                      <div className="flex-grow min-w-0">
-                        <p className="font-label-bold text-sm text-on-surface truncate">{collector.name}</p>
-                        <p className="text-[11px] text-on-surface-variant">{collector.totalWins} {t("home.wins")}</p>
-                      </div>
-                      <p className="font-price-display text-sm font-bold text-secondary shrink-0">
-                        ${collector.totalSpent.toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
+      <section className="max-w-7xl mx-auto px-4 md:px-8 w-full animate-fade-in" style={{ animationDelay: '800ms' }}>
+        <h2 className="font-headline-lg text-3xl font-bold text-on-surface mb-6">{t("home.community")}</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Top Collectors */}
+          <div className="bg-surface-container rounded-xl border border-white/5 p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="material-symbols-outlined text-secondary text-2xl">emoji_events</span>
+              <h3 className="font-headline-md text-xl font-semibold text-on-surface">{t("home.topCollectors")}</h3>
             </div>
-
-            {/* Recent Activity Feed */}
-            <div className="bg-surface-container rounded-xl border border-white/5 p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <span className="material-symbols-outlined text-tertiary text-2xl">bolt</span>
-                <h3 className="font-headline-md text-xl font-semibold text-on-surface">{t("home.liveActivity")}</h3>
-                <div className="ml-auto flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-[10px] text-green-400 font-label-bold uppercase">{t("home.live")}</span>
-                </div>
-              </div>
-              {homeStats.recentBids.length === 0 ? (
-                <p className="text-on-surface-variant text-sm">{t("home.noRecentActivity")}</p>
-              ) : (
-                <div className="flex flex-col gap-2 max-h-[320px] overflow-y-auto pr-1">
-                  {homeStats.recentBids.map((bid, idx) => (
-                    <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low/50 animate-ticker-item" style={{ animationDelay: `${idx * 100}ms` }}>
-                      <div className="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
-                        {bid.userAvatar ? (
-                          <img src={bid.userAvatar} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="material-symbols-outlined text-[14px] text-on-surface-variant">person</span>
-                        )}
-                      </div>
-                      <div className="flex-grow min-w-0">
-                        <p className="text-sm text-on-surface truncate">
-                          <span className="font-label-bold">{bid.userName}</span>
-                          {` ${t("home.bid")} `}
-                          <span className="text-secondary font-label-bold">${bid.amount.toLocaleString()}</span>
-                        </p>
-                        <p className="text-[11px] text-on-surface-variant truncate">{t("home.on")} {bid.auctionTitle}</p>
-                      </div>
-                      <span className="text-[10px] text-on-surface-variant whitespace-nowrap shrink-0">{timeAgo(bid.createdAt)}</span>
+            {!homeStats ? (
+              <div className="flex flex-col gap-3">
+                {Array(3).fill(0).map((_, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low/50">
+                    <Skeleton variant="text" width={24} height={16} className="text-center" />
+                    <Skeleton variant="circular" width={40} height={40} />
+                    <div className="flex-grow space-y-2 ml-1">
+                      <Skeleton variant="text" width="60%" height={12} />
+                      <Skeleton variant="text" width="30%" height={10} />
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    <Skeleton variant="text" width={60} height={14} />
+                  </div>
+                ))}
+              </div>
+            ) : homeStats.topCollectors.length === 0 ? (
+              <p className="text-on-surface-variant text-sm">{t("home.noDataYet")}</p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {homeStats.topCollectors.map((collector, idx) => (
+                  <div key={collector.name + idx} className="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low/50 hover:bg-surface-container-high/50 transition-colors">
+                    <span className={`font-price-display text-lg font-bold w-6 text-center ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-slate-300' : idx === 2 ? 'text-amber-700' : 'text-on-surface-variant'}`}>
+                      {idx + 1}
+                    </span>
+                    <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
+                      {collector.avatar ? (
+                        <img src={collector.avatar} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="material-symbols-outlined text-on-surface-variant">person</span>
+                      )}
+                    </div>
+                    <div className="flex-grow min-w-0">
+                      <p className="font-label-bold text-sm text-on-surface truncate">{collector.name}</p>
+                      <p className="text-[11px] text-on-surface-variant">{collector.totalWins} {t("home.wins")}</p>
+                    </div>
+                    <p className="font-price-display text-sm font-bold text-secondary shrink-0">
+                      ${collector.totalSpent.toLocaleString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </section>
-      )}
+
+          {/* Recent Activity Feed */}
+          <div className="bg-surface-container rounded-xl border border-white/5 p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="material-symbols-outlined text-tertiary text-2xl">bolt</span>
+              <h3 className="font-headline-md text-xl font-semibold text-on-surface">{t("home.liveActivity")}</h3>
+              <div className="ml-auto flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[10px] text-green-400 font-label-bold uppercase">{t("home.live")}</span>
+              </div>
+            </div>
+            {!homeStats ? (
+              <div className="flex flex-col gap-2">
+                {Array(3).fill(0).map((_, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low/50">
+                    <Skeleton variant="circular" width={32} height={32} />
+                    <div className="flex-grow space-y-2">
+                      <Skeleton variant="text" width="80%" height={12} />
+                      <Skeleton variant="text" width="50%" height={10} />
+                    </div>
+                    <Skeleton variant="text" width={30} height={10} />
+                  </div>
+                ))}
+              </div>
+            ) : homeStats.recentBids.length === 0 ? (
+              <p className="text-on-surface-variant text-sm">{t("home.noRecentActivity")}</p>
+            ) : (
+              <div className="flex flex-col gap-2 max-h-[320px] overflow-y-auto pr-1">
+                {homeStats.recentBids.map((bid, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low/50 animate-ticker-item" style={{ animationDelay: `${idx * 100}ms` }}>
+                    <div className="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
+                      {bid.userAvatar ? (
+                        <img src={bid.userAvatar} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="material-symbols-outlined text-[14px] text-on-surface-variant">person</span>
+                      )}
+                    </div>
+                    <div className="flex-grow min-w-0">
+                      <p className="text-sm text-on-surface truncate">
+                        <span className="font-label-bold">{bid.userName}</span>
+                        {` ${t("home.bid")} `}
+                        <span className="text-secondary font-label-bold">${bid.amount.toLocaleString()}</span>
+                      </p>
+                      <p className="text-[11px] text-on-surface-variant truncate">{t("home.on")} {bid.auctionTitle}</p>
+                    </div>
+                    <span className="text-[10px] text-on-surface-variant whitespace-nowrap shrink-0">{timeAgo(bid.createdAt)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
 
       {/* ===== NEWS & EDITORIAL ===== */}
       <section className="max-w-7xl mx-auto px-4 md:px-8 w-full animate-fade-in" style={{ animationDelay: '900ms' }}>
