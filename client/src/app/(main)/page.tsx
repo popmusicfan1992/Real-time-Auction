@@ -62,7 +62,7 @@ function timeAgo(dateStr: string): string {
 export default function HomePage() {
   const { user } = useAuth();
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [loading, setLoading] = useState(true);
   const [quickBidLoading, setQuickBidLoading] = useState<string | null>(null);
@@ -154,14 +154,35 @@ export default function HomePage() {
     }
   };
 
-  const handleNewsletter = () => {
+  const handleNewsletter = async () => {
     if (!newsletterEmail || !newsletterEmail.includes("@")) {
-      setToast({ message: "Please enter a valid email", type: "error" }); return;
+      setToast({
+        message: locale === "vi" ? "Vui lòng nhập địa chỉ email hợp lệ" : "Please enter a valid email address",
+        type: "error"
+      });
+      return;
     }
-    localStorage.setItem("gallery_newsletter", newsletterEmail);
-    setNewsletterSubscribed(true);
-    setToast({ message: "Subscribed successfully! 🎉", type: "success" });
-    setNewsletterEmail("");
+    try {
+      const res = await api.post("/newsletter/subscribe", { email: newsletterEmail });
+      localStorage.setItem("gallery_newsletter", newsletterEmail);
+      setNewsletterSubscribed(true);
+      setToast({
+        message: locale === "vi" ? "Đăng ký thành công! 🎉" : "Subscribed successfully! 🎉",
+        type: "success"
+      });
+      setNewsletterEmail("");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message;
+      let finalMsg = locale === "vi" ? "Đăng ký thất bại" : "Failed to subscribe";
+      if (errorMsg === "Email is already subscribed!") {
+        finalMsg = locale === "vi" ? "Email này đã được đăng ký!" : "This email is already subscribed!";
+      } else if (errorMsg === "Invalid email address") {
+        finalMsg = locale === "vi" ? "Địa chỉ email không hợp lệ" : "Invalid email address";
+      } else if (errorMsg) {
+        finalMsg = errorMsg;
+      }
+      setToast({ message: finalMsg, type: "error" });
+    }
   };
 
   // Split auctions

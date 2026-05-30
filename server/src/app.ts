@@ -9,6 +9,7 @@ import bidRoutes from "@/routes/bid.routes";
 import userRoutes from "@/routes/user.routes";
 import notificationRoutes from "@/routes/notification.routes";
 import chatbotRoutes from "@/routes/chatbot.routes";
+import newsletterRoutes from "@/routes/newsletter.routes";
 
 import webhookRoutes from "@/routes/webhook.routes";
 import walletRoutes from "@/routes/wallet.routes";
@@ -70,6 +71,7 @@ app.use("/api/wallet", walletRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/newsletter", newsletterRoutes);
 
 // Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
